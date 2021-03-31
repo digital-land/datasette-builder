@@ -2,3 +2,5 @@ datasette
 Click
 pytest
 requests
+black
+flake8

@@ -1,7 +1,7 @@
 all: lint test
 
 test:
-	python -m pytest -vv tests
+	python -m pytest -vvs tests
 
 lint: black-check flake8
 
@@ -13,3 +13,4 @@ flake8:
 
 init:
 	pip install -e .
+	pip install -r requirements.txt

@@ -25,3 +25,9 @@ jobs:
     - name: Lint, Test, Coverage
       run: |
         make
+    - name: Docker images
+      run: |
+        docker images
+    - name: Docker ps
+      run: |
+        docker ps -a
