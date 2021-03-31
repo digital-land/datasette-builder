@@ -1,0 +1,4 @@
+datasette
+Click
+pytest
+requests
