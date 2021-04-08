@@ -12,7 +12,7 @@ def cli():
 
 @click.command()
 @click.argument("config_path", type=click.Path(exists=True))
-@click.option("--tag")
+@click.option("--tag", "-t", default="data")
 def package(config_path, tag):
     reader = csv.DictReader(open(config_path))
     datasets = [row["path"] for row in reader]

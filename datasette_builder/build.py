@@ -1,5 +1,6 @@
 import re
 import subprocess
+from pathlib import Path
 
 
 def run(command):
@@ -20,13 +21,16 @@ parse_name = re.compile(r"^#[0-9]+ naming to ([^ ]*) done", re.MULTILINE)
 parse_name_alternate = re.compile(r"Successfully tagged ([^ ]*)", re.MULTILINE)
 
 
-def package_datasets(datasets, tag=None):
-    command = ["datasette", "package"]
-    if tag:
-        command.extend(["--tag", tag])
-    command.extend(datasets)
-    print(f"executing command: {command}")
-    proc = run(command)
+def package_datasets(datasets, base_tag):
+    datasette_tag = f"{base_tag}_datasette"
+    dl_tag = f"{base_tag}_digital_land"
+
+    container_id, name = build_datasette_container(datasets, datasette_tag)
+    container_id, name = build_digital_land_container(datasets, datasette_tag, dl_tag)
+    return (container_id, dl_tag)
+
+
+def parse_docker_output(proc):
     container_id_match = parse_container_id.search(proc.stderr)
 
     if container_id_match:
@@ -37,9 +41,40 @@ def package_datasets(datasets, tag=None):
 
     if not container_id_match:
         print("----- STDOUT -----")
-        print(proc.stdout)
+        print(proc.stdout or "EMPTY")
         print("----- STDERR -----")
-        print(proc.stderr)
+        print(proc.stderr or "EMPTY")
         raise Exception("container_id not matched")
 
     return (container_id_match.group(1), name_match.group(1) if name_match else None)
+
+
+def log_command(command):
+    print(f"executing command:\n{' '.join(command)}")
+
+
+def build_datasette_container(datasets, tag):
+    command = ["datasette", "package"]
+    if tag:
+        command.extend(["--tag", tag])
+    command.extend(datasets)
+    log_command(command)
+    proc = run(command)
+    return parse_docker_output(proc)
+
+
+def build_digital_land_container(datasets, source_tag, dest_tag):
+    command = [
+        "docker",
+        "build",
+        "-t",
+        dest_tag,
+        "--build-arg",
+        f"DATASETS={','.join([Path(d).name for d in datasets])}",
+        "--build-arg",
+        f"APP_IMAGE={source_tag}",
+        ".",
+    ]
+    log_command(command)
+    proc = run(command)
+    return parse_docker_output(proc)

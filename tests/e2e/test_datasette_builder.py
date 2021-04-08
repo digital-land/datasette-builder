@@ -38,10 +38,9 @@ def config_file(tmp_path, sqlite3_db):
 
 def test_datasette_builder(config_file):
     uid = str(uuid.uuid4())[:8]
-    docker_tag = f"e2e-test-image-{uid}"
-    proc_package = run(
-        ["datasette_builder", "package", "--tag", docker_tag, config_file]
-    )
+    base_tag = f"e2e-test-image-{uid}"
+    docker_tag = f"{base_tag}_digital_land"
+    proc_package = run(["datasette_builder", "package", "--tag", base_tag, config_file])
 
     assert proc_package.stderr == ""
     # assert re.match(r"^1 dataset successfully packaged", proc_package.stdout)
@@ -51,7 +50,7 @@ def test_datasette_builder(config_file):
     assert image, f"docker image with tag {docker_tag} not found"
 
     run_name = f"e2e-test-{uid}"
-    run(["docker", "run", "-d", "-p", "8081:8001", "--name", run_name, docker_tag])
+    run(["docker", "run", "-d", "-p", "8081:5000", "--name", run_name, docker_tag])
     time.sleep(5)  # wait for docker to get going
 
     r = requests.get("http://0.0.0.0:8081/test.json?sql=select+*+from+e2e_test")
