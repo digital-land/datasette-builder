@@ -2,3 +2,4 @@ dataset,url
 development-plan-document,
 development-plan-type,
 development-policy-category,
+developer-agreement-type,https://github.com/digital-land/developer-contributions-collection/raw/main/dataset/developer-agreement-type.sqlite3
