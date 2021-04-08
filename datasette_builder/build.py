@@ -54,7 +54,7 @@ def log_command(command):
 
 
 def build_datasette_container(datasets, tag):
-    command = ["datasette", "package"]
+    command = ["datasette", "package", "--metadata", "metadata.json"]
     if tag:
         command.extend(["--tag", tag])
     command.extend(datasets)

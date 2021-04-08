@@ -1,0 +1,14 @@
+{
+    "databases": {
+        "development-plan-document": {
+            "tables": {
+                "entry": {
+                    "label_column": "entity"
+                },
+                "fact": {
+                    "label_column": "attribute"
+                }
+            }
+        }
+    }
+}
