@@ -7,18 +7,15 @@ jobs:
   build:
 
     runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        python-version: [3.7, 3.8]
 
     steps:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: 3.8
     - name: Make Init
       run: |
         make init
