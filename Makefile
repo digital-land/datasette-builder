@@ -1,4 +1,4 @@
-BUILD_TAG := bram2000/data
+BUILD_TAG := digitalland/fact
 
 all: lint test
 
