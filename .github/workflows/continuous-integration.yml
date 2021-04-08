@@ -25,6 +25,9 @@ jobs:
     - name: Lint, Test, Coverage
       run: |
         make
+    - name: Collect
+      run: |
+        make collect
     - name: Build
       run: |
         make build

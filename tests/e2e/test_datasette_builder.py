@@ -6,6 +6,7 @@ import sqlite3
 import subprocess
 import time
 import uuid
+from pathlib import Path
 
 import pytest
 import requests
@@ -31,8 +32,8 @@ def config_file(tmp_path, sqlite3_db):
 
     config_path = tmp_path / "test.config"
     writer = csv.writer(open(config_path, "w"))
-    writer.writerow(["name", "path"])
-    writer.writerow(["test", sqlite3_db])
+    writer.writerow(["dataset", "url"])
+    writer.writerow([str(Path(sqlite3_db).stem), ""])
     return config_path
 
 
@@ -40,7 +41,17 @@ def test_datasette_builder(config_file):
     uid = str(uuid.uuid4())[:8]
     base_tag = f"e2e-test-image-{uid}"
     docker_tag = f"{base_tag}_digital_land"
-    proc_package = run(["datasette_builder", "package", "--tag", base_tag, config_file])
+    proc_package = run(
+        [
+            "datasette_builder",
+            "package",
+            "--tag",
+            base_tag,
+            "--data-dir",
+            str(config_file.parent),
+            str(config_file),
+        ]
+    )
 
     assert proc_package.stderr == ""
     # assert re.match(r"^1 dataset successfully packaged", proc_package.stdout)

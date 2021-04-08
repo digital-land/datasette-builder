@@ -1,4 +1,4 @@
-path
-data/development-plan-document.sqlite3
-data/development-plan-type.sqlite3
-data/development-policy-category.sqlite3
+dataset,url
+development-plan-document,
+development-plan-type,
+development-policy-category,
