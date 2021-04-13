@@ -48,7 +48,7 @@ jobs:
         time: '30s'
     - name: Deploy
       run: |
-        aws elasticbeanstalk update-environment --application-name datasette-aws-docker --environment-name Datasetteawsdocker-env --version-label datasette-aws-docker-source-2
+        aws elasticbeanstalk update-environment --application-name datasette-aws-docker --environment-name Datasetteawsdocker-env --version-label datasette-aws-docker-https-test-8
     - name: Docker images
       run: |
         docker images
