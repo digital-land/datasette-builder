@@ -6,13 +6,10 @@ collect:
 	mkdir -p data
 	datasette_builder collect ./datasets.csv
 
-ifeq (, $(shell which docker))
-$(error "No docker in $(PATH), consider doing apt-get install docker OR brew install --cask docker")
-endif
-build:
+build: docker-check
 	datasette_builder package --tag $(BUILD_TAG) ./datasets.csv
 
-push:
+push: docker-check
 	docker push $(BUILD_TAG)_digital_land
 
 test:
@@ -32,3 +29,8 @@ init:
 
 clobber:
 	rm data/*
+
+docker-check:
+ifeq (, $(shell which docker))
+	$(error "No docker in $(PATH), consider doing apt-get install docker OR brew install --cask docker")
+endif
