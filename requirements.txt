@@ -3,5 +3,6 @@ datasette
 Click
 pytest
 requests
+PyGithub
 black
 flake8
