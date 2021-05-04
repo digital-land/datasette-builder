@@ -2,7 +2,6 @@ import csv
 import os
 import sys
 from pathlib import Path
-import glob
 import click
 
 from .build import package_datasets
@@ -27,9 +26,7 @@ def collect(config_path):
 @click.option("--tag", "-t", default="data")
 @click.option("--data-dir", default="./data")
 def package(tag, data_dir):
-    datasets = [
-        f"{d}" for d in Path(data_dir).glob('*.sqlite3')
-    ]
+    datasets = [f"{d}" for d in Path(data_dir).glob("*.sqlite3")]
     for dataset in datasets:
         if not Path(dataset).exists():
             print(f"{dataset} not found")
