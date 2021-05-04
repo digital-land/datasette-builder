@@ -1,5 +1,5 @@
 -e git+https://github.com/digital-land/digital-land-python.git#egg=digital-land
--e git+https://github.com/digital-land/view-model.git#egg=view-model
+-e git+https://github.com/digital-land/view-builder.git#egg=view-builder
 datasette
 Click
 pytest
