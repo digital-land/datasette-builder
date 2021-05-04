@@ -1,5 +1,4 @@
 import os
-import csv
 import json
 
 # import re
@@ -8,7 +7,6 @@ import sqlite3
 import subprocess
 import time
 import uuid
-from pathlib import Path
 
 
 import pytest
@@ -20,7 +18,7 @@ def sqlite3_db(tmp_path):
     "provides a test sqlite3 db"
     db_dir = tmp_path / "test_dir/"
     os.mkdir(db_dir)
-    db_path =  db_dir / "test.sqlite3"
+    db_path = db_dir / "test.sqlite3"
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
     c.execute("CREATE TABLE e2e_test (id integer PRIMARY KEY, name TEXT)")
@@ -30,7 +28,6 @@ def sqlite3_db(tmp_path):
     return db_path
 
 
- 
 def test_datasette_builder(sqlite3_db):
     uid = str(uuid.uuid4())[:8]
     base_tag = f"e2e-test-image-{uid}"
@@ -42,7 +39,7 @@ def test_datasette_builder(sqlite3_db):
             "--tag",
             base_tag,
             "--data-dir",
-            str(sqlite3_db.parent)
+            str(sqlite3_db.parent),
         ]
     )
 
