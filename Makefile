@@ -1,6 +1,6 @@
 BUILD_TAG := digitalland/fact
 CACHE_DIR := var/cache/
-VIEW_MODEL_DB := data/view_model.db
+VIEW_MODEL_DB := data/view_model.sqlite3
 
 all: lint test
 
@@ -9,7 +9,7 @@ collect:
 	datasette_builder collect ./datasets.csv
 
 build: docker-check
-	datasette_builder package --tag $(BUILD_TAG) ./datasets.csv
+	datasette_builder package --tag $(BUILD_TAG)
 
 push: docker-check
 	docker push $(BUILD_TAG)_digital_land
