@@ -1,4 +1,6 @@
 BUILD_TAG := digitalland/fact
+CACHE_DIR := var/cache/
+VIEW_MODEL_DB := data/view_model.db
 
 all: lint test
 
@@ -34,3 +36,19 @@ docker-check:
 ifeq (, $(shell which docker))
 	$(error "No docker in $(PATH), consider doing apt-get install docker OR brew install --cask docker")
 endif
+
+$(VIEW_MODEL_DB):
+	view_builder create $(VIEW_MODEL_DB)
+
+build-view-model: $(CACHE_DIR)organisation.csv $(VIEW_MODEL_DB)
+	view_builder load_organisations $(VIEW_MODEL_DB)
+	view_builder build local-authority-district ../datasette-builder/data/local-authority-district.sqlite3 $(VIEW_MODEL_DB)
+	view_builder build development-policy-category ../datasette-builder/data/development-policy-category.sqlite3 $(VIEW_MODEL_DB)
+	view_builder build development-plan-type ../datasette-builder/data/development-plan-type.sqlite3 $(VIEW_MODEL_DB)
+	view_builder build --allow-broken-relationships development-policy ../datasette-builder/data/development-policy.sqlite3 $(VIEW_MODEL_DB)
+	view_builder build --allow-broken-relationships development-plan-document ../datasette-builder/data/development-plan-document.sqlite3 $(VIEW_MODEL_DB)
+
+$(CACHE_DIR)organisation.csv:
+	mkdir -p $(CACHE_DIR)
+	curl -qs "https://raw.githubusercontent.com/digital-land/organisation-dataset/main/collection/organisation.csv" > $(CACHE_DIR)organisation.csv
+
