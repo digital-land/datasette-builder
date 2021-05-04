@@ -25,7 +25,10 @@ jobs:
     - name: Collect
       run: |
         make collect
-    - name: Build
+    - name: Build View Model
+      run: |
+        make build-view-model
+    - name: Build Docker
       run: |
         make build
     - name: Configure AWS Credentials
