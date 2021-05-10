@@ -20,7 +20,7 @@ test:
 lint: black-check flake8
 
 black-check:
-	black --check .
+	black --check  . --exclude '/(src|\.venv/)'
 
 flake8:
 	flake8 .
