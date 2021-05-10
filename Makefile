@@ -23,7 +23,7 @@ black-check:
 	black --check  . --exclude '/(src|\.venv/)'
 
 flake8:
-	flake8 .
+	flake8 --exclude src .
 
 init:
 	pip install -e .
