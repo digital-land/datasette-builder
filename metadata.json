@@ -1,23 +1,25 @@
 {
     "databases": {
-        "development-plan-document": {
+        "view_model": {
             "tables": {
                 "slug": {
                     "label_column": "slug"
-                },
+                }
+            },
+            "queries": {
+                "point_geography": {
+                    "sql": "SELECT * FROM geography WHERE geometry IS NOT NULL AND WITHIN(GeomFromText('POINT(' || :latitude || ' ' || :longitude)'), geom)",
+                    "title": "Geographies that encompass a point"
+                }
+            }
+        },
+        "development-plan-document": {
+            "tables": {
                 "entry": {
                     "label_column": "entity"
                 },
                 "fact": {
                     "label_column": "attribute"
-                }
-            }
-        },
-        "fixtures": {
-            "queries": {
-                "point_geography": {
-                    "sql": "SELECT * FROM geography WHERE geometry IS NOT NULL AND WITHIN(GeomFromText('POINT(' || :latitude || ' ' || :longitude)'), geom)",
-                    "title": "Geographies that encompass a point"
                 }
             }
         }
