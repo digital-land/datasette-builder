@@ -7,6 +7,7 @@ RUN pip install uvicorn[standard] gunicorn environs
 EXPOSE 5000
 
 ADD app.py .
+ADD settings.json .
 
 ARG DATASETS
 ENV DIGITAL_LAND_DATASETS ${DATASETS}

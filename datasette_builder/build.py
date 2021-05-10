@@ -54,7 +54,15 @@ def log_command(command):
 
 
 def build_datasette_container(datasets, tag):
-    command = ["datasette", "package", "--metadata", "metadata.json"]
+    command = [
+        "datasette",
+        "package",
+        "--extra-options",
+        "'--setting sql_time_limit_ms 8000'",
+        "--spatialite",
+        "--metadata",
+        "metadata.json",
+    ]
     if tag:
         command.extend(["--tag", tag])
     command.extend(datasets)
