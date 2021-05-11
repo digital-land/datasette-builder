@@ -23,7 +23,7 @@ black-check:
 	black --check  . --exclude '/(src|\.venv/)'
 
 flake8:
-	flake8 --exclude src .
+	flake8 --exclude 'src,.venv' .
 
 init:
 	pip install -e .
@@ -50,6 +50,7 @@ build-view-model: $(CACHE_DIR)organisation.csv $(VIEW_MODEL_DB)
 	view_builder build --allow-broken-relationships development-policy ../datasette-builder/data/development-policy.sqlite3 $(VIEW_MODEL_DB)
 	view_builder build --allow-broken-relationships development-plan-document ../datasette-builder/data/development-plan-document.sqlite3 $(VIEW_MODEL_DB)
 	view_builder build --allow-broken-relationships document ../datasette-builder/data/document.sqlite3 $(VIEW_MODEL_DB)
+	view_builder index $(VIEW_MODEL_DB)
 
 $(CACHE_DIR)organisation.csv:
 	mkdir -p $(CACHE_DIR)
