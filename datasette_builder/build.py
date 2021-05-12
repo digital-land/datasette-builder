@@ -15,7 +15,7 @@ def run(command):
     return proc
 
 
-parse_container_id = re.compile(r"^#[0-9]+ writing image ([^ ]*) done$", re.MULTILINE)
+parse_container_id = re.compile(r"^#[0-9]+ writing image ([^ ]*) .*done$", re.MULTILINE)
 parse_container_id_alternate = re.compile(r"^Successfully built ([^ ]*)$", re.MULTILINE)
 parse_name = re.compile(r"^#[0-9]+ naming to ([^ ]*) done", re.MULTILINE)
 parse_name_alternate = re.compile(r"Successfully tagged ([^ ]*)", re.MULTILINE)
@@ -57,8 +57,8 @@ def build_datasette_container(datasets, tag):
     command = [
         "datasette",
         "package",
-        "--extra-options",
-        "'--setting sql_time_limit_ms 8000'",
+        '--extra-options="--setting sql_time_limit_ms 8000"',
+        "--install=datasette-leaflet-geojson",
         "--spatialite",
         "--metadata",
         "metadata.json",
