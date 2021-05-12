@@ -8,7 +8,7 @@
             },
             "queries": {
                 "point_geography": {
-                    "sql": "SELECT geography, name FROM geography WHERE geometry IS NOT NULL AND WITHIN(GeomFromText('POINT(' || :latitude || ' ' || :longitude || ')'), geom)",
+                    "sql": "SELECT geography, name, geometry FROM geography WHERE geometry IS NOT NULL AND WITHIN(GeomFromText('POINT(' || :longitude || ' ' || :latitude || ')'), geom)",
                     "title": "Geographies that encompass a point"
                 }
             }
