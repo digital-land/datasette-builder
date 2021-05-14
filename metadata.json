@@ -1,4 +1,9 @@
 {
+    "plugins": {
+        "datasette-cors": {
+            "host_wildcards": ["*"]
+        }
+    },
     "databases": {
         "view_model": {
             "tables": {

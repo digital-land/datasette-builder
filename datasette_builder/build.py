@@ -59,6 +59,7 @@ def build_datasette_container(datasets, tag):
         "package",
         '--extra-options="--setting sql_time_limit_ms 8000"',
         "--install=datasette-leaflet-geojson",
+        "--install=datasette-cors",
         "--spatialite",
         "--metadata",
         "metadata.json",
