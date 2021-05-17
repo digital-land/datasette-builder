@@ -23,15 +23,15 @@
                     "title": "Geographies that encompass a point"
                 },
                 "bounded_geography_old": {
-                    "sql": "SELECT * FROM geography WHERE geography.rowid in (SELECT pkid FROM idx_geography_geom WHERE xmin > :bbox_minx AND xmax < :bbox_maxx AND ymin > :bbox_miny AND ymax < :bbox_maxy)",
+                    "sql": "SELECT * FROM geography WHERE geography.rowid in (SELECT pkid FROM idx_geography_geom WHERE (xmin < :bbox_maxx AND xmax > :bbox_minx) AND (ymin < :bbox_maxy AND ymax > :bbox_miny))",
                     "title": "Geographies inside bounding box (old)"
                 },
                 "bounded_geography": {
-                    "sql": "SELECT * FROM geography WHERE geography.rowid in (SELECT pkid FROM idx_geography_geom WHERE (xmin < :bbox_maxx AND xmax > :bbox_minx) AND (ymin < :bbox_maxy AND ymax > :bbox_miny))",
+                    "sql": "SELECT features FROM v_geography_simplified WHERE v_geography_simplified.rowid in (SELECT pkid FROM idx_geography_geom WHERE (xmin < :bbox_maxx AND xmax > :bbox_minx) AND (ymin < :bbox_maxy AND ymax > :bbox_miny))",
                     "title": "Geographies inside bounding box"
                 },
                 "bounded_geography_simplified": {
-                    "sql": "SELECT * FROM v_geography_simplified WHERE v_geography_simplified.rowid in (SELECT pkid FROM idx_geography_geom WHERE (xmin < :bbox_maxx AND xmax > :bbox_minx) AND (ymin < :bbox_maxy AND ymax > :bbox_miny))",
+                    "sql": "SELECT simple_features FROM v_geography_simplified WHERE v_geography_simplified.rowid in (SELECT pkid FROM idx_geography_geom WHERE (xmin < :bbox_maxx AND xmax > :bbox_minx) AND (ymin < :bbox_maxy AND ymax > :bbox_miny))",
                     "title": "Geographies inside bounding box (simplified)"
                 }
             }
