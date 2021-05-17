@@ -24,3 +24,4 @@ ownership-status,https://raw.githubusercontent.com/digital-land/ownership-status
 development-policy-category,https://raw.githubusercontent.com/digital-land/development-policy-category-collection/main/dataset/development-policy-category.sqlite3
 document,https://raw.githubusercontent.com/digital-land/document-collection/main/dataset/document.sqlite3
 document-type,https://raw.githubusercontent.com/digital-land/document-type-collection/main/dataset/document-type.sqlite3
+site-category,https://raw.githubusercontent.com/digital-land/site-category-collection/main/dataset/site-category.sqlite3
