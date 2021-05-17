@@ -2,11 +2,17 @@
     "plugins": {
         "datasette-cors": {
             "host_wildcards": ["*"]
+        },
+        "datasette-leaflet-geojson": {
+            "default_maps_to_load": 3
         }
     },
     "databases": {
         "view_model": {
             "tables": {
+                "geography": {
+                    "size": 10
+                },
                 "slug": {
                     "label_column": "slug"
                 }
