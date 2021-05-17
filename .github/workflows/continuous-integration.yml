@@ -19,9 +19,12 @@ jobs:
     - name: Install spatialite
       run: |
         sudo apt-get update
+        sudo apt-cache search sqlite3
+        sudo apt-cache search sqlite
         sudo apt-cache search spatialite
         sudo apt-get install libsqlite3-mod-spatialite
         sudo dpkg -L libsqlite3-mod-spatialite
+        sqlite3 --version
     - name: Make Init
       run: |
         make init
