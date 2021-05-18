@@ -55,7 +55,11 @@ build-view-model: $(CACHE_DIR)organisation.csv $(VIEW_MODEL_DB)
 	view_builder build --allow-broken-relationships development-plan-document ../datasette-builder/data/development-plan-document.sqlite3 $(VIEW_MODEL_DB)
 	view_builder build --allow-broken-relationships document ../datasette-builder/data/document.sqlite3 $(VIEW_MODEL_DB)
 	view_builder build --allow-broken-relationships brownfield-land ../datasette-builder/data/brownfield-land.sqlite3 $(VIEW_MODEL_DB)
-	view_builder index $(VIEW_MODEL_DB)
+	# view_builder index $(VIEW_MODEL_DB)
+
+postprocess-view-model:
+	docker build -t sqlite3-spatialite -f SqliteDockerfile .
+	docker run -t --mount src=$(shell pwd),target=/tmp,type=bind sqlite3-spatialite -init ./post_process.sql -bail -echo  /tmp/data/view_model.sqlite3 .exit
 
 $(CACHE_DIR)organisation.csv:
 	mkdir -p $(CACHE_DIR)
