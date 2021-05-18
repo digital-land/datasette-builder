@@ -1,4 +1,7 @@
 .load /usr/lib/x86_64-linux-gnu/mod_spatialite.so
+
+BEGIN
+
 SELECT InitSpatialMetadata(1);
 SELECT AddGeometryColumn('geography', 'geom', 4326, 'MULTIPOLYGON', 2);
 UPDATE geography SET geom = GeomFromText(geometry, 4326);
