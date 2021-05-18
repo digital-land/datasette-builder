@@ -19,3 +19,7 @@ FROM
     geography AS g
 JOIN slug AS s ON g.slug_id = s.id
 WHERE json_valid(AsGeoJSON(g.geom)) = 1;
+
+SELECT count(*) FROM v_geography_simplified;
+
+COMMIT
