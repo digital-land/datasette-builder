@@ -1,6 +1,6 @@
 .load /usr/lib/x86_64-linux-gnu/mod_spatialite.so
 
-BEGIN
+BEGIN;
 
 SELECT InitSpatialMetadata(1);
 SELECT AddGeometryColumn('geography', 'geom', 4326, 'MULTIPOLYGON', 2);
@@ -25,4 +25,4 @@ WHERE json_valid(AsGeoJSON(g.geom)) = 1;
 
 SELECT count(*) FROM v_geography_simplified;
 
-COMMIT
+COMMIT;
