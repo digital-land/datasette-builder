@@ -29,7 +29,7 @@ SELECT
 FROM
     geography AS g
 JOIN slug AS s ON g.slug_id = s.id
-WHERE json_valid(AsGeoJSON(g.geom)) = 1;
+WHERE json_valid(AsGeoJSON(GeomFromText(g.geometry))) = 1;
 
 SELECT CreateSpatialIndex("geography_geom", "geom");
 SELECT count(*) AS geography_count FROM geography_geom;

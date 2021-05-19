@@ -33,6 +33,10 @@
                 "bounded_geography_simplified": {
                     "sql": "SELECT geojson_simple FROM geography_geom WHERE geography_geom.rowid in (SELECT pkid FROM idx_geography_geom_geom WHERE (xmin < :bbox_maxx AND xmax > :bbox_minx) AND (ymin < :bbox_maxy AND ymax > :bbox_miny))",
                     "title": "Geographies inside bounding box (simplified)"
+                },
+                "bounded_geography_simplified_paged": {
+                    "sql": "SELECT geojson_simple FROM geography_geom WHERE geography_geom.rowid > :after AND geography_geom.rowid in (SELECT pkid FROM idx_geography_geom_geom WHERE (xmin < :bbox_maxx AND xmax > :bbox_minx) AND (ymin < :bbox_maxy AND ymax > :bbox_miny)) ORDER BY rowid limit 100",
+                    "title": "Geographies inside bounding box (simplified) page size 100"
                 }
             }
         },
