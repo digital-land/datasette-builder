@@ -27,11 +27,11 @@
                     "title": "Geographies inside bounding box (old)"
                 },
                 "bounded_geography": {
-                    "sql": "SELECT features FROM v_geography_simplified WHERE v_geography_simplified.rowid in (SELECT pkid FROM idx_geography_geom WHERE (xmin < :bbox_maxx AND xmax > :bbox_minx) AND (ymin < :bbox_maxy AND ymax > :bbox_miny))",
+                    "sql": "SELECT geojson_simple FROM geography_geom WHERE geography_geom.rowid in (SELECT pkid FROM idx_geography_geom_geom WHERE (xmin < :bbox_maxx AND xmax > :bbox_minx) AND (ymin < :bbox_maxy AND ymax > :bbox_miny))",
                     "title": "Geographies inside bounding box"
                 },
                 "bounded_geography_simplified": {
-                    "sql": "SELECT simple_features FROM v_geography_simplified WHERE v_geography_simplified.rowid in (SELECT pkid FROM idx_geography_geom WHERE (xmin < :bbox_maxx AND xmax > :bbox_minx) AND (ymin < :bbox_maxy AND ymax > :bbox_miny))",
+                    "sql": "SELECT geojson_simple FROM geography_geom WHERE geography_geom.rowid in (SELECT pkid FROM idx_geography_geom_geom WHERE (xmin < :bbox_maxx AND xmax > :bbox_minx) AND (ymin < :bbox_maxy AND ymax > :bbox_miny))",
                     "title": "Geographies inside bounding box (simplified)"
                 }
             }
