@@ -27,8 +27,13 @@ WHERE json_valid(AsGeoJSON(g.geom)) = 1;
 SELECT count(*) FROM v_geography_simplified;
 
 CREATE INDEX idx_geography_geography ON geography(geography);
+CREATE INDEX idx_geography_type ON geography(type);
+
 CREATE INDEX idx_category_category ON category(category);
+CREATE INDEX idx_category_type ON category(type);
+
 CREATE INDEX idx_document_document ON document(document);
+
 CREATE INDEX idx_policy_policy ON policy(policy);
 
 CREATE INDEX idx_policy_geography_geography_id ON policy_geography(geography_id);
