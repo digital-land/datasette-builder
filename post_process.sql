@@ -16,16 +16,18 @@ SELECT count(*) AS geography_count FROM geography;
 DROP TABLE IF EXISTS geography_geom;
 CREATE TABLE geography_geom (
     geojson_simple,
-    geojson_full
+    geojson_full,
+    type
 );
 SELECT AddGeometryColumn('geography_geom', 'geom', 4326, 'MULTIPOLYGON', 2);
 
-INSERT INTO geography_geom (rowid, geojson_simple, geojson_full, geom)
+INSERT INTO geography_geom (rowid, geojson_simple, geojson_full, type, geom)
 SELECT
     g.rowid AS rowid,
     json_object('type', 'Feature', 'id', g.rowid, 'properties', json_object('name', g.name, 'type', g.type, 'slug', s.slug, 'rowid', g.rowid, 'entry-date', entry_date, 'start-date', start_date, 'end-date', end_date), 'geometry', json(AsGeoJSON(Simplify(GeomFromText(g.geometry, 4326), 0.0005)))) AS geojson_simple,
     json_object('type', 'Feature', 'id', g.rowid, 'properties', json_object('name', g.name, 'type', g.type, 'slug', s.slug, 'rowid', g.rowid, 'entry-date', entry_date, 'start-date', start_date, 'end-date', end_date), 'geometry', json(AsGeoJSON(GeomFromText(g.geometry, 4326)))) AS geojson_full,
-    GeomFromText(g.geometry, 4326) as geom
+    g.type AS type,
+    GeomFromText(g.geometry, 4326) AS geom
 FROM
     geography AS g
 JOIN slug AS s ON g.slug_id = s.id
