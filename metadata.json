@@ -49,6 +49,10 @@
                 "bounded_geography_full_paged_by_type": {
                     "sql": "SELECT geojson_full AS geojson FROM geography_geom WHERE geography_geom.rowid > :after AND geography_geom.type = :type AND geography_geom.rowid in (SELECT pkid FROM idx_geography_geom_geom WHERE (xmin < :bbox_maxx AND xmax > :bbox_minx) AND (ymin < :bbox_maxy AND ymax > :bbox_miny)) ORDER BY rowid limit 100",
                     "title": "Geographies inside bounding box (full) page size 100 by type"
+                },
+                "bounded_geography_brownfield_land": {
+                    "sql": "SELECT geojson_full AS geojson FROM geography_geom WHERE geography_geom.rowid > :after AND geography_geom.type = :type AND Within(geography_geom.geom_point, BuildMbr(:bbox_minx, :bbox_miny, :bbox_maxx, :bbox_maxy, 4326)) ORDER BY rowid limit 100",
+                    "title": "Points inside bounding box page size 100 BFL"
                 }
             }
         },
