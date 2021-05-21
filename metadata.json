@@ -51,7 +51,7 @@
                     "title": "Geographies inside bounding box (full) page size 100 by type"
                 },
                 "bounded_geography_brownfield_land": {
-                    "sql": "SELECT json_insert(geojson_full, '$.properties.hectares', (select m.value from metric as m join geography_metric gm on m.rowid = gm.metric_id where gm.geography_id = gg.rowid and m.field='hectares')) AS geojson FROM geography_geom WHERE geography_geom.rowid > :after AND geography_geom.type = :type AND Within(geography_geom.geom_point, BuildMbr(:bbox_minx, :bbox_miny, :bbox_maxx, :bbox_maxy, 4326)) ORDER BY rowid limit 100",
+                    "sql": "SELECT json_insert(gg.geojson_full, '$.properties.hectares', (select m.value from metric as m join geography_metric gm on m.rowid = gm.metric_id where gm.geography_id = gg.rowid and m.field='hectares')) AS geojson FROM geography_geom AS gg WHERE gg.rowid > :after AND gg.type = :type AND Within(gg.geom_point, BuildMbr(CAST(:bbox_minx AS DOUBLE), CAST(:bbox_miny AS DOUBLE), CAST(:bbox_maxx AS DOUBLE), CAST(:bbox_maxy AS DOUBLE), 4326)) ORDER BY rowid limit 100",
                     "title": "Points inside bounding box page size 100 BFL"
                 }
             }
