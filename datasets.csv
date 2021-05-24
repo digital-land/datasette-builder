@@ -25,3 +25,4 @@ development-policy-category,https://raw.githubusercontent.com/digital-land/devel
 document,https://raw.githubusercontent.com/digital-land/document-collection/main/dataset/document.sqlite3
 document-type,https://raw.githubusercontent.com/digital-land/document-type-collection/main/dataset/document-type.sqlite3
 site-category,https://raw.githubusercontent.com/digital-land/site-category-collection/main/dataset/site-category.sqlite3
+heritage-coast,https://raw.githubusercontent.com/digital-land/heritage-coast-collection/main/dataset/heritage-coast.sqlite3
