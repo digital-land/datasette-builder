@@ -60,6 +60,7 @@ build-view-model: $(CACHE_DIR)organisation.csv $(VIEW_MODEL_DB)
 	# view_builder index $(VIEW_MODEL_DB)
 
 postprocess-view-model:
+	datasette_builder build-queries ./metadata.json
 	docker build -t sqlite3-spatialite -f SqliteDockerfile .
 	docker run -t --mount src=$(shell pwd),target=/tmp,type=bind sqlite3-spatialite -init ./post_process.sql -bail -echo  /tmp/data/view_model.sqlite3 .exit
 

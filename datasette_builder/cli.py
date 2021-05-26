@@ -3,6 +3,9 @@ import os
 import sys
 from pathlib import Path
 import click
+from collections import defaultdict
+from datasette_builder.canned_query import generate_model_canned_queries
+import json
 
 from .build import package_datasets
 from .csv_dataset import sqlite_to_csv
@@ -20,6 +23,19 @@ def cli():
 def collect(config_path):
     datasets = datasets_from_config(config_path)
     collect_datasets(datasets)
+
+
+@click.command()
+@click.argument("metadata_path", type=click.Path(exists=True), default="./metadata.json")
+def build_queries(metadata_path):
+    with open(metadata_path, 'r') as json_file:
+        metadata = defaultdict(None, json.load(json_file))
+
+    canned_queries = generate_model_canned_queries()
+    metadata["databases"]["view_model"]["queries"].update(canned_queries)
+
+    with open("./metadata_generated.json", 'w') as json_file:
+        json.dump(metadata, json_file, indent=4)
 
 
 @click.command()
@@ -64,3 +80,4 @@ cli.add_command(collect)
 cli.add_command(package)
 cli.add_command(build_csv)
 cli.add_command(scrape)
+cli.add_command(build_queries)

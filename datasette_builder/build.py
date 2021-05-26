@@ -62,7 +62,7 @@ def build_datasette_container(datasets, tag):
         "--install=datasette-cors",
         "--spatialite",
         "--metadata",
-        "metadata.json",
+        "metadata_generated.json",
     ]
     if tag:
         command.extend(["--tag", tag])
