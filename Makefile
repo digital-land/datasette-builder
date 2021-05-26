@@ -9,7 +9,8 @@ collect:
 	datasette_builder collect ./datasets.csv
 
 build: docker-check
-	datasette_builder package --tag $(BUILD_TAG)
+	datasette_builder build-queries ./metadata.json
+	datasette_builder package --tag $(BUILD_TAG) --metadata metadata_generated.json
 
 push: docker-check
 	docker push $(BUILD_TAG)_digital_land
@@ -60,7 +61,6 @@ build-view-model: $(CACHE_DIR)organisation.csv $(VIEW_MODEL_DB)
 	# view_builder index $(VIEW_MODEL_DB)
 
 postprocess-view-model:
-	datasette_builder build-queries ./metadata.json
 	docker build -t sqlite3-spatialite -f SqliteDockerfile .
 	docker run -t --mount src=$(shell pwd),target=/tmp,type=bind sqlite3-spatialite -init ./post_process.sql -bail -echo  /tmp/data/view_model.sqlite3 .exit
 

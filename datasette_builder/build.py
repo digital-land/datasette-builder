@@ -21,11 +21,11 @@ parse_name = re.compile(r"^#[0-9]+ naming to ([^ ]*) done", re.MULTILINE)
 parse_name_alternate = re.compile(r"Successfully tagged ([^ ]*)", re.MULTILINE)
 
 
-def package_datasets(datasets, base_tag):
+def package_datasets(datasets, base_tag, metadata):
     datasette_tag = f"{base_tag}_datasette"
     dl_tag = f"{base_tag}_digital_land"
 
-    container_id, name = build_datasette_container(datasets, datasette_tag)
+    container_id, name = build_datasette_container(datasets, datasette_tag, metadata)
     container_id, name = build_digital_land_container(datasets, datasette_tag, dl_tag)
     return (container_id, dl_tag)
 
@@ -53,7 +53,7 @@ def log_command(command):
     print(f"executing command:\n{' '.join(command)}")
 
 
-def build_datasette_container(datasets, tag):
+def build_datasette_container(datasets, tag, metadata):
     command = [
         "datasette",
         "package",
@@ -61,9 +61,10 @@ def build_datasette_container(datasets, tag):
         "--install=datasette-leaflet-geojson",
         "--install=datasette-cors",
         "--spatialite",
-        "--metadata",
-        "metadata_generated.json",
     ]
+
+    if metadata:
+        command.extend(["--metadata", metadata])
     if tag:
         command.extend(["--tag", tag])
     command.extend(datasets)

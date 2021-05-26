@@ -43,14 +43,15 @@ def build_queries(metadata_path):
 @click.command()
 @click.option("--tag", "-t", default="data")
 @click.option("--data-dir", default="./data")
-def package(tag, data_dir):
+@click.option("--metadata", default="./metadata.json")
+def package(tag, data_dir, metadata):
     datasets = [f"{d}" for d in Path(data_dir).glob("*.sqlite3")]
     for dataset in datasets:
         if not Path(dataset).exists():
             print(f"{dataset} not found")
             sys.exit(1)
 
-    container_id, name = package_datasets(datasets, tag)
+    container_id, name = package_datasets(datasets, tag, metadata)
     click.echo("%s dataset successfully packaged" % len(datasets))
     click.echo(f"container_id: {container_id}")
     if name:
