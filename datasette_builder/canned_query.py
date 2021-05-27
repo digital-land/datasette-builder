@@ -15,7 +15,7 @@ def generate_model_canned_queries():
         canned_queries[f"get_{model.__tablename__}_id"] = generate_get_id_query(model)
         relationships = inspect(model).relationships
         related_classes = (rel.mapper.class_ for rel in relationships)
-        join_query = ""
+        join_query = "SELECT * FROM ("
         for related_class in related_classes:
             if any(
                 True
@@ -26,9 +26,10 @@ def generate_model_canned_queries():
             query = generate_join_query(model, related_class)
             if query:
                 join_query += query + " UNION ALL "
-        if join_query:
+        if join_query.endswith(" UNION ALL "):
             # Strip the last UNION ALL
             join_query = join_query[:-11]
+            join_query += ") WHERE gid > :gid ORDER BY gid"
             canned_queries[f"get_{model.__tablename__}_references"] = {
                 "sql": join_query,
                 "title": f"Get all references for {model.__tablename__}",
@@ -69,6 +70,7 @@ def generate_join_query(original_model, related_model):
             f"{related_table}.id AS id, "
             f"{related_table}.{related_table} as reference, "
             f"{related_table}.name as name, "
+            f"slug.id AS gid, "
             f"slug.slug AS href, "
             f"'{related_table}' as type "
             f"FROM {related_table} "
