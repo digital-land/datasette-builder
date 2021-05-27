@@ -38,7 +38,7 @@ def generate_model_canned_queries():
 
 
 def generate_get_id_query(model):
-    sql_query = f"SELECT id FROM {model.__tablename__} WHERE {model.__tablename__}=:{model.__tablename__}"
+    sql_query = f"SELECT id{', type' if hasattr(model, 'type') else ''} FROM {model.__tablename__} WHERE {model.__tablename__}=:{model.__tablename__}"
     return {"sql": sql_query, "title": f"Get {model.__tablename__} id by reference"}
 
 
