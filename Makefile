@@ -44,6 +44,7 @@ $(VIEW_MODEL_DB):
 build-view-model: $(CACHE_DIR)organisation.csv $(VIEW_MODEL_DB)
 	view_builder load_organisations $(VIEW_MODEL_DB)
 	view_builder build local-authority-district ../datasette-builder/data/local-authority-district.sqlite3 $(VIEW_MODEL_DB)
+	view_builder build parish data/parish.sqlite3 $(VIEW_MODEL_DB)
 	view_builder build conservation-area ../datasette-builder/data/conservation-area.sqlite3 $(VIEW_MODEL_DB)
 	view_builder build ancient-woodland data/ancient-woodland.sqlite3 $(VIEW_MODEL_DB)
 	view_builder build area-of-outstanding-natural-beauty data/area-of-outstanding-natural-beauty.sqlite3 $(VIEW_MODEL_DB)
