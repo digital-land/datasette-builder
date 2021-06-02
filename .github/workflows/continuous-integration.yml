@@ -29,7 +29,8 @@ jobs:
         make init
     - name: Lint, Test, Coverage
       run: |
-        make
+        make test
+        make lint
     - name: Collect
       run: |
         make collect
