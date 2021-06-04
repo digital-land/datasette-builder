@@ -25,6 +25,15 @@ DATASETS=\
 	$(CACHE_DIR)document.sqlite3\
 	$(CACHE_DIR)green-belt.sqlite3\
 	$(CACHE_DIR)heritage-coast.sqlite3\
+	$(CACHE_DIR)historic-england/battlefield.sqlite3\
+	$(CACHE_DIR)historic-england/building-preservation-notice.sqlite3\
+	$(CACHE_DIR)historic-england/certificate-of-immunity.sqlite3\
+	$(CACHE_DIR)historic-england/heritage-at-risk.sqlite3\
+	$(CACHE_DIR)historic-england/listed-building.sqlite3\
+	$(CACHE_DIR)historic-england/park-and-garden.sqlite3\
+	$(CACHE_DIR)historic-england/protected-wreck-site.sqlite3\
+	$(CACHE_DIR)historic-england/scheduled-monument.sqlite3\
+	$(CACHE_DIR)historic-england/world-heritage-site.sqlite3\
 	$(CACHE_DIR)special-area-of-conservation.sqlite3
 
 all:: build
