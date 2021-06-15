@@ -28,3 +28,5 @@ site-category,https://collection-dataset.s3.eu-west-2.amazonaws.com/site-categor
 heritage-coast,https://collection-dataset.s3.eu-west-2.amazonaws.com/heritage-coast-collection/dataset/heritage-coast.sqlite3
 area-of-outstanding-natural-beauty,https://collection-dataset.s3.eu-west-2.amazonaws.com/area-of-outstanding-natural-beauty-collection/dataset/area-of-outstanding-natural-beauty.sqlite3
 ancient-woodland,https://collection-dataset.s3.eu-west-2.amazonaws.com/ancient-woodland-collection/dataset/ancient-woodland.sqlite3
+ramsar,https://collection-dataset.s3.eu-west-2.amazonaws.com/ramsar-collection/dataset/ramsar.sqlite3
+site-of-special-scientific-interest,https://collection-dataset.s3.eu-west-2.amazonaws.com/site-of-special-scientific-interest-collection/dataset/site-of-special-scientific-interest.sqlite3
