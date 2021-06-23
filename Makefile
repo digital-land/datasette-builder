@@ -101,7 +101,7 @@ generate-tiles: tippecanoe-check
 	gsed -i '1s/^/{"type":"FeatureCollection","features":[/' $(CACHE_DIR)geometry.txt 
 	echo ']}' >> $(CACHE_DIR)geometry.txt
 	tr '\n' , < $(CACHE_DIR)geometry.txt > $(CACHE_DIR)geometry.geojson
-	tippecanoe -z15 -r1 -o $(CACHE_DIR)dataset_tiles.mbtiles --cluster-densest-as-needed --extend-zooms-if-still-dropping $(CACHE_DIR)geometry.geojson
+	tippecanoe -z15 -r1 -M 5000000 -o $(CACHE_DIR)dataset_tiles.mbtiles --cluster-densest-as-needed $(CACHE_DIR)geometry.geojson
 
 
 $(CACHE_DIR)organisation.csv:

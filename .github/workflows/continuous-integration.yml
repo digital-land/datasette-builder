@@ -38,6 +38,7 @@ jobs:
       run: |
         make build-view-model
         make postprocess-view-model
+        make generate-tiles
     - name: Build Docker
       run: |
         make build
