@@ -29,29 +29,30 @@ def collect(config_path):
 @click.argument(
     "metadata_path", type=click.Path(exists=True), default="./metadata.json"
 )
-def build_queries(metadata_path):
-    with open(metadata_path, "r") as json_file:
+def build_view_queries(metadata_path):
+    with open(Path(metadata_path) / "metadata.json", "r") as json_file:
         metadata = defaultdict(None, json.load(json_file))
 
     canned_queries = generate_model_canned_queries()
     metadata["databases"]["view_model"]["queries"].update(canned_queries)
 
-    with open("./metadata_generated.json", "w") as json_file:
+    with open(Path(metadata_path) / "metadata_generated.json", "w") as json_file:
         json.dump(metadata, json_file, indent=4)
 
 
 @click.command()
 @click.option("--tag", "-t", default="data")
 @click.option("--data-dir", default="./var/cache")
-@click.option("--metadata", default="./metadata.json")
-def package(tag, data_dir, metadata):
-    datasets = [f"{d}" for d in Path(data_dir).rglob("*.sqlite3")]
+@click.option("--ext", default="sqlite3")
+@click.option("--options", default=None) 
+def package(tag, data_dir, ext, options):
+    datasets = [f"{d}" for d in Path(data_dir).rglob(f"*.{ext}")]
     for dataset in datasets:
         if not Path(dataset).exists():
             print(f"{dataset} not found")
             sys.exit(1)
 
-    container_id, name = package_datasets(datasets, tag, metadata)
+    container_id, name = package_datasets(datasets, tag, options)
     click.echo("%s dataset successfully packaged" % len(datasets))
     click.echo(f"container_id: {container_id}")
     if name:
@@ -83,4 +84,4 @@ cli.add_command(collect)
 cli.add_command(package)
 cli.add_command(build_csv)
 cli.add_command(scrape)
-cli.add_command(build_queries)
+cli.add_command(build_view_queries)

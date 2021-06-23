@@ -21,11 +21,11 @@ parse_name = re.compile(r"^#[0-9]+ naming to ([^ ]*) done", re.MULTILINE)
 parse_name_alternate = re.compile(r"Successfully tagged ([^ ]*)", re.MULTILINE)
 
 
-def package_datasets(datasets, base_tag, metadata):
+def package_datasets(datasets, base_tag, options):
     datasette_tag = f"{base_tag}_datasette"
     dl_tag = f"{base_tag}_digital_land"
 
-    container_id, name = build_datasette_container(datasets, datasette_tag, metadata)
+    container_id, name = build_datasette_container(datasets, datasette_tag, options)
     container_id, name = build_digital_land_container(datasets, datasette_tag, dl_tag)
     return (container_id, dl_tag)
 
@@ -53,20 +53,20 @@ def log_command(command):
     print(f"executing command:\n{' '.join(command)}")
 
 
-def build_datasette_container(datasets, tag, metadata):
+def build_datasette_container(datasets, tag, options):
     command = [
         "datasette",
         "package",
-        '--extra-options="--setting sql_time_limit_ms 8000"',
-        "--install=datasette-leaflet-geojson",
-        "--install=datasette-cors",
-        "--spatialite",
+        '--extra-options="--setting sql_time_limit_ms 8000"'
     ]
 
-    if metadata:
-        command.extend(["--metadata", metadata])
+    if options:
+         extra_commands = re.split(' |,', options)
+         command.extend(extra_commands)
+
     if tag:
         command.extend(["--tag", tag])
+        
     command.extend(datasets)
     log_command(command)
     proc = run(command)

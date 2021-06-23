@@ -1,8 +1,11 @@
 include makerules/makerules.mk
 
-BUILD_TAG := digitalland/fact
+BUILD_TAG_FACT := digitalland/fact
+BUILD_TAG_TILE := digitalland/tile
 CACHE_DIR := var/cache/
 VIEW_MODEL_DB := var/cache/view_model.sqlite3
+VIEW_CONFIG_DIR := config/view_model/
+TILE_CONFIG_DIR := config/tile_server/
 
 DATASETS=\
 	$(CACHE_DIR)document-type.sqlite3\
@@ -43,11 +46,14 @@ all:: build
 collect: $(CACHE_DIR)organisation.csv $(DATASETS)
 
 build: docker-check
-	datasette_builder build-queries ./metadata.json
-	datasette_builder package --tag $(BUILD_TAG) --metadata metadata_generated.json
+	datasette_builder build-view-queries $(VIEW_CONFIG_DIR)
+	datasette_builder package --data-dir $(CACHE_DIR) --ext "sqlite3" --tag $(BUILD_TAG_FACT) --options "-m $(VIEW_CONFIG_DIR)metadata_generated.json,--install=datasette-leaflet-geojson,--install=datasette-cors,--spatialite"
+	datasette_builder package --data-dir $(CACHE_DIR) --ext "mbtiles" --tag $(BUILD_TAG_TILE) --options "-m $(TILE_CONFIG_DIR)metadata.json,--install=datasette-cors,--install=datasette-tiles,--plugins-dir=$(TILE_CONFIG_DIR)plugins/,--spatialite"
+
 
 push: docker-check
-	docker push $(BUILD_TAG)_digital_land
+	docker push $(BUILD_TAG_FACT)_digital_land
+	docker push $(BUILD_TAG_TILE)_digital_land
 
 test:
 	python -m pytest -vvs tests
@@ -68,6 +74,15 @@ ifeq (, $(shell which docker))
 	$(error "No docker in $(PATH), consider doing apt-get install docker OR brew install --cask docker")
 endif
 
+tippecanoe-check:
+ifeq (, $(shell which docker))
+	git clone https://github.com/mapbox/tippecanoe.git
+	cd tippecanoe
+	make -j
+	make install
+endif
+
+
 build-view-model: $(VIEW_MODEL_DB)
 
 $(VIEW_MODEL_DB):
@@ -81,6 +96,13 @@ $(VIEW_MODEL_DB):
 postprocess-view-model:
 	docker build -t sqlite3-spatialite -f SqliteDockerfile .
 	docker run -t --mount src=$(shell pwd),target=/tmp,type=bind sqlite3-spatialite -init ./post_process.sql -bail -echo  /tmp/$(CACHE_DIR)view_model.sqlite3 .exit
+
+generate-tiles: tippecanoe-check
+	gsed -i '1s/^/{"type":"FeatureCollection","features":[/' $(CACHE_DIR)geometry.txt 
+	echo ']}' >> $(CACHE_DIR)geometry.txt
+	tr '\n' , < $(CACHE_DIR)geometry.txt > $(CACHE_DIR)geometry.geojson
+	tippecanoe -z15 -r1 -o $(CACHE_DIR)dataset_tiles.mbtiles --cluster-densest-as-needed --extend-zooms-if-still-dropping $(CACHE_DIR)geometry.geojson
+
 
 $(CACHE_DIR)organisation.csv:
 	@mkdir -p $(CACHE_DIR)
