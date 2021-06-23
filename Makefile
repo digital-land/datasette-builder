@@ -75,7 +75,7 @@ ifeq (, $(shell which docker))
 endif
 
 tippecanoe-check:
-ifeq (, $(shell which docker))
+ifeq (, $(shell which tippecanoe))
 	git clone https://github.com/mapbox/tippecanoe.git
 	cd tippecanoe
 	make -j
@@ -98,7 +98,7 @@ postprocess-view-model:
 	docker run -t --mount src=$(shell pwd),target=/tmp,type=bind sqlite3-spatialite -init ./post_process.sql -bail -echo  /tmp/$(CACHE_DIR)view_model.sqlite3 .exit
 
 generate-tiles: tippecanoe-check
-	gsed -i '1s/^/{"type":"FeatureCollection","features":[/' $(CACHE_DIR)geometry.txt 
+	sed -i '1s/^/{"type":"FeatureCollection","features":[/' $(CACHE_DIR)geometry.txt 
 	echo ']}' >> $(CACHE_DIR)geometry.txt
 	tr '\n' , < $(CACHE_DIR)geometry.txt > $(CACHE_DIR)geometry.geojson
 	tippecanoe -z15 -r1 -M 5000000 -o $(CACHE_DIR)dataset_tiles.mbtiles --cluster-densest-as-needed $(CACHE_DIR)geometry.geojson
