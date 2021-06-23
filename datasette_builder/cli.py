@@ -44,7 +44,7 @@ def build_view_queries(metadata_path):
 @click.option("--tag", "-t", default="data")
 @click.option("--data-dir", default="./var/cache")
 @click.option("--ext", default="sqlite3")
-@click.option("--options", default=None) 
+@click.option("--options", default=None)
 def package(tag, data_dir, ext, options):
     datasets = [f"{d}" for d in Path(data_dir).rglob(f"*.{ext}")]
     for dataset in datasets:

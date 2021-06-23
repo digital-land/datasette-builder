@@ -47,8 +47,8 @@ collect: $(CACHE_DIR)organisation.csv $(DATASETS)
 
 build: docker-check
 	datasette_builder build-view-queries $(VIEW_CONFIG_DIR)
-	datasette_builder package --data-dir $(CACHE_DIR) --ext "sqlite3" --tag $(BUILD_TAG_FACT) --options "-m $(VIEW_CONFIG_DIR)metadata_generated.json,--install=datasette-leaflet-geojson,--install=datasette-cors,--spatialite"
-	datasette_builder package --data-dir $(CACHE_DIR) --ext "mbtiles" --tag $(BUILD_TAG_TILE) --options "-m $(TILE_CONFIG_DIR)metadata.json,--install=datasette-cors,--install=datasette-tiles,--plugins-dir=$(TILE_CONFIG_DIR)plugins/,--spatialite"
+	datasette_builder package --data-dir $(CACHE_DIR) --ext "sqlite3" --tag $(BUILD_TAG_FACT) --options "-m $(VIEW_CONFIG_DIR)metadata_generated.json,--install=datasette-leaflet-geojson,--install=datasette-cors"
+	datasette_builder package --data-dir $(CACHE_DIR) --ext "mbtiles" --tag $(BUILD_TAG_TILE) --options "-m $(TILE_CONFIG_DIR)metadata.json,--install=datasette-cors,--install=datasette-tiles,--plugins-dir=$(TILE_CONFIG_DIR)plugins/"
 
 
 push: docker-check

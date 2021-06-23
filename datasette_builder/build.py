@@ -57,16 +57,17 @@ def build_datasette_container(datasets, tag, options):
     command = [
         "datasette",
         "package",
-        '--extra-options="--setting sql_time_limit_ms 8000"'
+        '--extra-options="--setting sql_time_limit_ms 8000"',
+        "--spatialite",
     ]
 
     if options:
-         extra_commands = re.split(' |,', options)
-         command.extend(extra_commands)
+        extra_commands = re.split(" |,", options)
+        command.extend(extra_commands)
 
     if tag:
         command.extend(["--tag", tag])
-        
+
     command.extend(datasets)
     log_command(command)
     proc = run(command)

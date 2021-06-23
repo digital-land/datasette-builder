@@ -41,14 +41,20 @@ def register_routes():
     return [
         (r"/-/tiles$", index),
         (r"/-/tiles/(?P<db_name>[^/]+)$", explorer),
-        (r"/-/tiles/(?P<db_name>[^/]+)/(?P<z>\d+)/(?P<x>\d+)/(?P<y>\d+)\.vector.pbf$", tile),
+        (
+            r"/-/tiles/(?P<db_name>[^/]+)/(?P<z>\d+)/(?P<x>\d+)/(?P<y>\d+)\.vector.pbf$",
+            tile,
+        ),
         (
             r"/-/tiles-tms/(?P<db_name>[^/]+)/(?P<z>\d+)/(?P<x>\d+)/(?P<y>\d+)\.vector.pbf$",
             tile_tms,
         ),
         (r"/-/tiles-stack$", tiles_stack_explorer),
         (r"/-/tiles-stack/(?P<z>\d+)/(?P<x>\d+)/(?P<y>\d+)\.vector.pbf$", tiles_stack),
-        (r"/-/tiles-stack-tms/(?P<z>\d+)/(?P<x>\d+)/(?P<y>\d+)\.vector.pbf$", tiles_stack_tms),
+        (
+            r"/-/tiles-stack-tms/(?P<z>\d+)/(?P<x>\d+)/(?P<y>\d+)\.vector.pbf$",
+            tiles_stack_tms,
+        ),
     ]
 
 
