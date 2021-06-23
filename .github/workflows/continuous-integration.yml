@@ -23,8 +23,8 @@ jobs:
         sudo dpkg -L libsqlite3-mod-spatialite
     - name: Test
       run: |
-        	git clone https://github.com/mapbox/tippecanoe.git
-          cd tippecanoe
-          make -j
-          make install
+        git clone https://github.com/mapbox/tippecanoe.git
+        cd tippecanoe
+        make -j
+        make install
           
