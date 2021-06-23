@@ -8,7 +8,6 @@ from datasette_tiles.utils import (
 )
 import json
 import math
-import gzip
 
 # 256x256 PNG of colour #dddddd, compressed using https://squoosh.app
 PNG_404 = (
