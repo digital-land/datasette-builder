@@ -101,7 +101,7 @@ async def _tile(request, datasette, tms):
     db = datasette.get_database(db_name)
     tile = await load_tile(db, request, tms)
     if tile is None:
-        return Response(body=None, content_type="text/plain", status=404)
+        return Response(body="", content_type="text/plain", status=404)
     r = Response(body=tile, content_type="application/x-protobuf")
     r.headers["Content-Encoding"] = "gzip"
     return r
@@ -116,7 +116,7 @@ async def _tiles_stack(datasette, request, tms):
             r = Response(body=tile, content_type="application/x-protobuf")
             r.headers["Content-Encoding"] = "gzip"
             return r
-    return Response(body=None, content_type="text/plain", status=404)
+    return Response(body="", content_type="text/plain", status=404)
 
 
 async def tiles_stack(datasette, request):
