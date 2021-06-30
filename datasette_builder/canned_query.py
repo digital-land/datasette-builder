@@ -4,7 +4,7 @@ from sqlalchemy.inspection import inspect
 excluded_relationships = ["organisation", "metric"]
 
 
-def generate_model_canned_queries():
+def generate_model_canned_queries(pagination=True):
     canned_queries = {}
     schema_models = (
         c
@@ -29,7 +29,9 @@ def generate_model_canned_queries():
         if join_query.endswith(" UNION ALL "):
             # Strip the last UNION ALL
             join_query = join_query[:-11]
-            join_query += ") WHERE gid > :gid ORDER BY gid"
+            join_query += ")"
+            if pagination:
+                join_query += " WHERE gid > :gid ORDER BY gid"
             canned_queries[f"get_{model.__tablename__}_references"] = {
                 "sql": join_query,
                 "title": f"Get all references for {model.__tablename__}",
