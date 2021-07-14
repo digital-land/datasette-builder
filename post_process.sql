@@ -25,8 +25,8 @@ SELECT AddGeometryColumn('geography_geom', 'geom_point', 4326, 'POINT', 2);
 INSERT INTO geography_geom (rowid, geojson_simple, geojson_full, type, geom)
 SELECT
     g.rowid AS rowid,
-    json_object('type', 'Feature', 'id', g.rowid, 'properties', json_object('name', g.name, 'type', g.type, 'organisation', o.organisation, 'slug', s.slug, 'rowid', g.rowid, 'entry-date', entry_date, 'start-date', start_date, 'end-date', end_date), 'geometry', json(AsGeoJSON(Simplify(GeomFromText(g.geometry, 4326), 0.0005)))) AS geojson_simple,
-    json_object('type', 'Feature', 'id', g.rowid, 'properties', json_patch( json_object('name', g.name, 'type', g.type, 'organisation', o.organisation, 'slug', s.slug, 'rowid', g.rowid, 'entry-date', entry_date, 'start-date', start_date, 'end-date', end_date), json_group_object(metric.field, metric.value) ), 'geometry', json(AsGeoJSON(GeomFromText(g.geometry, 4326)))) AS geojson_full,
+    json_object('type', 'Feature', 'id', g.rowid, 'properties', json_object('name', g.name, 'type', g.type, 'organisation', o.organisation, 'slug', s.slug, 'rowid', g.rowid, 'entry-date', g.entry_date, 'start-date', g.start_date, 'end-date', g.end_date), 'geometry', json(AsGeoJSON(Simplify(GeomFromText(g.geometry, 4326), 0.0005)))) AS geojson_simple,
+    json_object('type', 'Feature', 'id', g.rowid, 'properties', json_patch( json_object('name', g.name, 'type', g.type, 'organisation', o.organisation, 'slug', s.slug, 'rowid', g.rowid, 'entry-date', g.entry_date, 'start-date', g.start_date, 'end-date', g.end_date), json_group_object(metric.field, metric.value) ), 'geometry', json(AsGeoJSON(GeomFromText(g.geometry, 4326)))) AS geojson_full,
     g.type AS type,
     GeomFromText(g.geometry, 4326) AS geom
 FROM
@@ -42,8 +42,8 @@ GROUP BY g.rowid;
 INSERT INTO geography_geom (rowid, geojson_simple, geojson_full, type, geom_point)
 SELECT
     g.rowid AS rowid,
-    json_object('type', 'Feature', 'id', g.rowid, 'properties', json_object('name', g.name, 'type', g.type, 'organisation', o.organisation, 'slug', s.slug, 'rowid', g.rowid, 'entry-date', entry_date, 'start-date', start_date, 'end-date', end_date), 'geometry', json(AsGeoJSON(Simplify(GeomFromText(g.point, 4326), 0.0005)))) AS geojson_simple,
-    json_object('type', 'Feature', 'id', g.rowid, 'properties', json_patch( json_object('name', g.name, 'type', g.type, 'organisation', o.organisation, 'slug', s.slug, 'rowid', g.rowid, 'entry-date', entry_date, 'start-date', start_date, 'end-date', end_date), json_group_object(metric.field, metric.value) ), 'geometry', json(AsGeoJSON(GeomFromText(g.point, 4326)))) AS geojson_full,
+    json_object('type', 'Feature', 'id', g.rowid, 'properties', json_object('name', g.name, 'type', g.type, 'organisation', o.organisation, 'slug', s.slug, 'rowid', g.rowid, 'entry-date', g.entry_date, 'start-date', g.start_date, 'end-date', g.end_date), 'geometry', json(AsGeoJSON(Simplify(GeomFromText(g.point, 4326), 0.0005)))) AS geojson_simple,
+    json_object('type', 'Feature', 'id', g.rowid, 'properties', json_patch( json_object('name', g.name, 'type', g.type, 'organisation', o.organisation, 'slug', s.slug, 'rowid', g.rowid, 'entry-date', g.entry_date, 'start-date', g.start_date, 'end-date', g.end_date), json_group_object(metric.field, metric.value) ), 'geometry', json(AsGeoJSON(GeomFromText(g.point, 4326)))) AS geojson_full,
     g.type AS type,
     GeomFromText(g.point, 4326) AS geom_point
 FROM
