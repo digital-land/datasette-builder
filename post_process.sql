@@ -35,7 +35,7 @@ JOIN slug AS s ON g.slug_id = s.id
 LEFT JOIN geography_metric ON geography_metric.geography_id = g.rowid
 LEFT JOIN metric ON geography_metric.metric_id = metric.id
 LEFT JOIN organisation_geography ON organisation_geography.geography_id = g.rowid
-LEFT JOIN organisation AS o ON organisation_geography.organisation_id = organisation.id
+LEFT JOIN organisation AS o ON organisation_geography.organisation_id = o.id
 WHERE json_valid(AsGeoJSON(GeomFromText(g.geometry))) = 1
 GROUP BY g.rowid;
 
@@ -52,7 +52,7 @@ JOIN slug AS s ON g.slug_id = s.id
 LEFT JOIN geography_metric ON geography_metric.geography_id = g.rowid
 LEFT JOIN metric ON geography_metric.metric_id = metric.id
 LEFT JOIN organisation_geography ON organisation_geography.geography_id = g.rowid
-LEFT JOIN organisation AS o ON organisation_geography.organisation_id = organisation.id
+LEFT JOIN organisation AS o ON organisation_geography.organisation_id = o.id
 WHERE json_valid(AsGeoJSON(GeomFromText(g.point))) = 1
 GROUP BY g.rowid;
 
