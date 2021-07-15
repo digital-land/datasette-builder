@@ -11,6 +11,7 @@ from .build import package_datasets
 from .csv_dataset import sqlite_to_csv
 from .collect import collect_datasets
 from .github_api import GithubApi
+from .tiles import build_tiles_for_datasets
 
 
 @click.group()
@@ -60,6 +61,13 @@ def package(tag, data_dir, ext, options):
 
 
 @click.command()
+@click.argument("view_model_path", type=click.Path(exists=True))
+@click.argument("output_path", type=click.Path())
+@click.argument("config_path", type=click.Path(exists=True), default="./datasets.csv")
+def build_tiles(view_model_path, output_path, config_path):
+    build_tiles_for_datasets(view_model_path, output_path)
+
+@click.command()
 @click.argument("input_path", type=click.Path(exists=True))
 @click.argument("output_path", type=click.Path())
 def build_csv(input_path, output_path):
@@ -85,3 +93,4 @@ cli.add_command(package)
 cli.add_command(build_csv)
 cli.add_command(scrape)
 cli.add_command(build_view_queries)
+cli.add_command(build_tiles)
