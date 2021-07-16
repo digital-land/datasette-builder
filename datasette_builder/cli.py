@@ -67,6 +67,7 @@ def package(tag, data_dir, ext, options):
 def build_tiles(view_model_path, output_path, config_path):
     build_tiles_for_datasets(view_model_path, output_path)
 
+
 @click.command()
 @click.argument("input_path", type=click.Path(exists=True))
 @click.argument("output_path", type=click.Path())
