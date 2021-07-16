@@ -61,9 +61,9 @@ SELECT count(*) AS geography_count FROM geography_geom;
 
 COMMIT;
 
---.output /tmp/var/cache/geometry.txt
---
---SELECT json_patch(geojson_full, json_object('tippecanoe', json_object('layer', type))) from geography_geom;
+.output /tmp/var/cache/geometry.txt
+
+SELECT json_patch(geojson_full, json_object('tippecanoe', json_object('layer', type))) from geography_geom;
 
 /* CREATE TABLE v_geography_simplified */
 /* AS */
