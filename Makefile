@@ -39,7 +39,8 @@ DATASETS=\
 	$(CACHE_DIR)historic-england/world-heritage-site.sqlite3\
 	$(CACHE_DIR)special-area-of-conservation.sqlite3\
 	$(CACHE_DIR)ramsar.sqlite3\
-    $(CACHE_DIR)site-of-special-scientific-interest.sqlite3
+    	$(CACHE_DIR)site-of-special-scientific-interest.sqlite3\
+	$(CACHE_DIR)open-space
 
 all:: build
 
