@@ -40,7 +40,7 @@ DATASETS=\
 	$(CACHE_DIR)special-area-of-conservation.sqlite3\
 	$(CACHE_DIR)ramsar.sqlite3\
     	$(CACHE_DIR)site-of-special-scientific-interest.sqlite3\
-	$(CACHE_DIR)open-space
+	$(CACHE_DIR)open-space.sqlite3
 
 all:: build
 
