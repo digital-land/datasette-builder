@@ -53,6 +53,10 @@
                 "bounded_geography_brownfield_land": {
                     "sql": "SELECT json_insert(gg.geojson_full, '$.properties.hectares', (select m.value from metric as m join geography_metric gm on m.rowid = gm.metric_id where gm.geography_id = gg.rowid and m.field='hectares')) AS geojson FROM geography_geom AS gg WHERE gg.rowid > :after AND gg.type = :type AND Within(gg.geom_point, BuildMbr(CAST(:bbox_minx AS DOUBLE), CAST(:bbox_miny AS DOUBLE), CAST(:bbox_maxx AS DOUBLE), CAST(:bbox_maxy AS DOUBLE), 4326)) ORDER BY rowid limit 100",
                     "title": "Points inside bounding box page size 100 BFL"
+                },
+                "geography_datasets_for_organisation" : {
+                    "sql": "SELECT DISTINCT geography.type FROM geography INNER JOIN organisation_geography ON organisation_geography.geography_id = geography.id INNER JOIN organisation ON organisation_geography.organisation_id = organisation.id WHERE organisation.organisation = :organisation",
+                    "title": "Geography datasets corresponding to an organisation"
                 }
             }
         },
