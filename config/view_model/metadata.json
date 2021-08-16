@@ -59,7 +59,7 @@
                     "title": "Geography datasets corresponding to an organisation"
                 },
                 "typology_geography_by_slug": {
-                    "sql": "SELECT g.*, gg.geojson_full, GROUP_CONCAT(o.organisation, ';') AS organisations FROM geography AS g INNER JOIN geography_geom AS gg ON g.rowid = gg.rowid INNER JOIN slug AS s ON s.rowid = g.slug_id INNER JOIN organisation_geography AS og ON g.rowid = og.geography_id INNER JOIN organisation AS o ON o.rowid = og.organisation_id WHERE s.slug = :slug",
+                    "sql": "SELECT g.*, gg.geojson_full, GROUP_CONCAT(o.organisation, ';') AS organisations FROM geography AS g LEFT OUTER JOIN geography_geom AS gg ON g.rowid = gg.rowid INNER JOIN slug AS s ON s.rowid = g.slug_id INNER JOIN organisation_geography AS og ON g.rowid = og.geography_id INNER JOIN organisation AS o ON o.rowid = og.organisation_id WHERE s.slug = :slug",
                     "title": "Get complete geography entity by slug"
                 }
             }
