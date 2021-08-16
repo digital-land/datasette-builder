@@ -57,7 +57,10 @@
                 "geography_datasets_for_organisation" : {
                     "sql": "SELECT DISTINCT geography.type FROM geography INNER JOIN organisation_geography ON organisation_geography.geography_id = geography.id INNER JOIN organisation ON organisation_geography.organisation_id = organisation.id WHERE organisation.organisation = :organisation",
                     "title": "Geography datasets corresponding to an organisation"
-                }
+                },
+                "typology_geography_by_slug": {
+                    "sql": "SELECT g.*, gg.geojson_full, GROUP_CONCAT(o.organisation, ';') AS organisations FROM geography AS g INNER JOIN geography_geom AS gg ON g.rowid = gg.rowid INNER JOIN slug AS s ON s.rowid = g.slug_id INNER JOIN organisation_geography AS og ON g.rowid = og.geography_id INNER JOIN organisation AS o ON o.rowid = og.organisation_id WHERE s.slug = :slug",
+                    "title": "Get complete geography entity by slug"
             }
         },
         "development-plan-document": {
