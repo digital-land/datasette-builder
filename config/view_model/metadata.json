@@ -69,6 +69,10 @@
                 "typology_document_by_slug": {
                     "sql": "SELECT d.*, GROUP_CONCAT(o.organisation, ';') AS organisations, GROUP_CONCAT(c.category, ';') AS categories FROM document AS d INNER JOIN slug AS s ON s.rowid = d.slug_id LEFT OUTER JOIN document_organisation AS do ON d.rowid = do.document_id INNER JOIN organisation AS o ON o.rowid = do.organisation_id LEFT OUTER JOIN document_category AS dc ON d.rowid = dc.document_id INNER JOIN category AS c ON dc.category_id = c.rowid WHERE s.slug = :slug",
                     "title": "Get complete document entity by slug"
+                },
+                "typology_policy_by_slug": {
+                    "sql": "SELECT p.*, GROUP_CONCAT(o.organisation, ';') AS organisations, GROUP_CONCAT(gg.geojson_full, ';') AS geographies, GROUP_CONCAT(c.category) AS categories FROM policy AS p INNER JOIN slug AS s ON p.slug_id = s.rowid LEFT OUTER JOIN policy_organisation AS po ON p.rowid = po.policy_id INNER JOIN organisation AS o ON po.organisation_id = o.rowid LEFT OUTER JOIN policy_geography AS pg ON p.rowid = pg.policy_id INNER JOIN geography_geom AS gg ON pg.geography_id = gg.rowid LEFT OUTER JOIN policy_category AS pc ON p.rowid = pc.policy_id INNER JOIN category AS c ON pc.category_id = c.rowid WHERE s.slug = :slug",
+                    "title": "Get complete document entity by slug"
                 }
             }
         },
