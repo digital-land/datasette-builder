@@ -65,6 +65,10 @@
                 "typology_category_by_slug": {
                     "sql": "SELECT c.* FROM category AS c INNER JOIN slug AS s ON s.rowid = c.rowid WHERE s.slug = :slug",
                     "title": "Get complete category entity by slug"
+                },
+                "typology_document_by_slug": {
+                    "sql": "SELECT d.*, GROUP_CONCAT(o.organisation, ';') AS organisations, GROUP_CONCAT(c.category, ';') AS categories FROM document AS d INNER JOIN slug AS s ON s.rowid = d.slug_id LEFT OUTER JOIN document_organisation AS do ON d.rowid = do.document_id INNER JOIN organisation AS o ON o.rowid = do.organisation_id LEFT OUTER JOIN document_category AS dc ON d.rowid = dc.document_id INNER JOIN category AS c ON dc.category_id = c.rowid WHERE s.slug = :slug",
+                    "title": "Get complete document entity by slug"
                 }
             }
         },
