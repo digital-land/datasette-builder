@@ -71,7 +71,7 @@
                     "title": "Get complete document entity by slug"
                 },
                 "typology_policy_by_slug": {
-                    "sql": "SELECT p.*, GROUP_CONCAT(o.organisation, ';') AS organisations, GROUP_CONCAT(gg.geojson_full, ';') AS geographies, GROUP_CONCAT(c.category) AS categories FROM policy AS p INNER JOIN slug AS s ON p.slug_id = s.rowid LEFT OUTER JOIN policy_organisation AS po ON p.rowid = po.policy_id INNER JOIN organisation AS o ON po.organisation_id = o.rowid LEFT OUTER JOIN policy_geography AS pg ON p.rowid = pg.policy_id INNER JOIN geography_geom AS gg ON pg.geography_id = gg.rowid LEFT OUTER JOIN policy_category AS pc ON p.rowid = pc.policy_id INNER JOIN category AS c ON pc.category_id = c.rowid WHERE s.slug = :slug",
+                    "sql": "SELECT p.*, GROUP_CONCAT(o.organisation, ';') AS organisations, GROUP_CONCAT(gg.geojson_full, ';') AS geometry, GROUP_CONCAT(g.geography, ';') AS geographies, GROUP_CONCAT(c.category) AS categories FROM policy AS p INNER JOIN slug AS s ON p.slug_id = s.rowid LEFT OUTER JOIN policy_organisation AS po ON p.rowid = po.policy_id INNER JOIN organisation AS o ON po.organisation_id = o.rowid LEFT OUTER JOIN policy_geography AS pg ON p.rowid = pg.policy_id INNER JOIN geography AS g on pg.geography_id = g.rowid INNER JOIN geography_geom AS gg ON pg.geography_id = gg.rowid LEFT OUTER JOIN policy_category AS pc ON p.rowid = pc.policy_id INNER JOIN category AS c ON pc.category_id = c.rowid WHERE s.slug = :slug",
                     "title": "Get complete document entity by slug"
                 }
             }
