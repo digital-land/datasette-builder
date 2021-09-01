@@ -27,9 +27,7 @@ def collect(config_path):
 
 
 @click.command()
-@click.argument(
-    "metadata_path", type=click.Path(exists=True), default="./"
-)
+@click.argument("metadata_path", type=click.Path(exists=True), default="./")
 def build_view_queries(metadata_path):
     with open(Path(metadata_path) / "metadata.json", "r") as json_file:
         metadata = defaultdict(None, json.load(json_file))
