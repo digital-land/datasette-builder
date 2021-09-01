@@ -81,6 +81,11 @@ $(CACHE_DIR)organisation.csv:
 	@mkdir -p $(CACHE_DIR)
 	curl -qfsL "$(SOURCE_URL)organisation-dataset/main/collection/organisation.csv" > $(CACHE_DIR)organisation.csv
 
+
+# Temporarily redefine variable to point to another s3 bucket
+define dataset_url
+'https://entity-spike.s3.eu-west-2.amazonaws.com/$(2)-collection/dataset/$(1).sqlite3'
+endef
 #
 #  download cached copy of dataset
 #
