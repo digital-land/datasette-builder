@@ -1,48 +1,19 @@
 include makerules/makerules.mk
 
-BUILD_TAG_FACT := digitalland/fact
-BUILD_TAG_TILE := digitalland/tile
+BUILD_TAG_FACT := digitalland/fact_v2
+BUILD_TAG_TILE := digitalland/tile_v2
 CACHE_DIR := var/cache/
 VIEW_MODEL_DB := var/cache/view_model.sqlite3
 VIEW_CONFIG_DIR := config/view_model/
 TILE_CONFIG_DIR := config/tile_server/
 
-DATASETS=\
-	$(CACHE_DIR)document-type.sqlite3\
-	$(CACHE_DIR)development-plan-type.sqlite3\
-	$(CACHE_DIR)development-policy-category.sqlite3\
-	$(CACHE_DIR)planning-permission-status.sqlite3\
-	$(CACHE_DIR)planning-permission-type.sqlite3\
-	$(CACHE_DIR)ownership-status.sqlite3\
-	$(CACHE_DIR)site-category.sqlite3\
-	\
-	$(CACHE_DIR)local-authority-district.sqlite3\
-	$(CACHE_DIR)parish.sqlite3\
-	\
-	$(CACHE_DIR)ancient-woodland.sqlite3\
-	$(CACHE_DIR)area-of-outstanding-natural-beauty.sqlite3\
-	$(CACHE_DIR)brownfield-land.sqlite3\
-	$(CACHE_DIR)conservation-area.sqlite3\
-	$(CACHE_DIR)development-policy.sqlite3\
-	$(CACHE_DIR)development-plan-document.sqlite3\
-	$(CACHE_DIR)document.sqlite3\
-	$(CACHE_DIR)green-belt.sqlite3\
-	$(CACHE_DIR)heritage-coast.sqlite3\
-	$(CACHE_DIR)historic-england/battlefield.sqlite3\
-	$(CACHE_DIR)historic-england/building-preservation-notice.sqlite3\
-	$(CACHE_DIR)historic-england/certificate-of-immunity.sqlite3\
-	$(CACHE_DIR)historic-england/heritage-at-risk.sqlite3\
-	$(CACHE_DIR)historic-england/listed-building.sqlite3\
-	$(CACHE_DIR)historic-england/park-and-garden.sqlite3\
-	$(CACHE_DIR)historic-england/protected-wreck-site.sqlite3\
-	$(CACHE_DIR)historic-england/scheduled-monument.sqlite3\
-	$(CACHE_DIR)historic-england/world-heritage-site.sqlite3\
-	$(CACHE_DIR)special-area-of-conservation.sqlite3\
-	$(CACHE_DIR)ramsar.sqlite3\
-    	$(CACHE_DIR)site-of-special-scientific-interest.sqlite3\
-	$(CACHE_DIR)open-space.sqlite3
+DATASETS=$(CACHE_DIR)conservation-area.sqlite3
 
 all:: build
+
+init::
+	pip3 uninstall -y view_builder
+	pip3 install -e git+https://github.com/digital-land/view-builder.git@entity_feature#egg=view_builder
 
 collect: $(CACHE_DIR)organisation.csv $(DATASETS)
 

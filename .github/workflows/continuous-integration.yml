@@ -63,17 +63,4 @@ jobs:
     - name: Push
       run: |
         make push
-    - name: Sleep for 30 seconds
-      uses: jakejarvis/wait-action@master
-      with:
-        time: '30s'
-    - name: Deploy
-      run: |
-        aws elasticbeanstalk update-environment --application-name datasette-aws-docker --environment-name Datasetteawsdocker-env --version-label datasette-aws-docker-4
-        aws elasticbeanstalk update-environment --application-name datasette-tile-server --environment-name Datasettetileserver-env --version-label datasette-tile-server-source-2
-    - name: Docker images
-      run: |
-        docker images
-    - name: Docker ps
-      run: |
-        docker ps -a
+        

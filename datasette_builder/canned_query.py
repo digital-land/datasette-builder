@@ -72,12 +72,10 @@ def generate_join_query(original_model, related_model):
             f"{related_table}.id AS id, "
             f"{related_table}.{related_table} as reference, "
             f"{related_table}.name as name, "
-            f"slug.id AS gid, "
-            f"slug.slug AS href, "
+            f"{related_table}.entity as entity, "
             f"'{related_table}' as type "
             f"FROM {related_table} "
             f"INNER JOIN {join_table} ON ({join_table}.{related_table}_id = {related_table}.id "
             f"AND {join_table}.{original_table}_id = :{original_table}) "
-            f"INNER JOIN slug on slug.id={related_table}.slug_id"
         )
     return sql_query
