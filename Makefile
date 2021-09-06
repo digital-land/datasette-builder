@@ -22,6 +22,7 @@ DATASETS=\
 	$(CACHE_DIR)ancient-woodland.sqlite3\
 	$(CACHE_DIR)area-of-outstanding-natural-beauty.sqlite3\
 	$(CACHE_DIR)brownfield-land.sqlite3\
+	$(CACHE_DIR)brownfield-site.sqlite3\
 	$(CACHE_DIR)conservation-area.sqlite3\
 	$(CACHE_DIR)development-policy.sqlite3\
 	$(CACHE_DIR)development-plan-document.sqlite3\
