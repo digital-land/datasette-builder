@@ -34,7 +34,7 @@ FROM
 LEFT JOIN geography_metric ON geography_metric.geography_id = g.rowid
 LEFT JOIN metric ON geography_metric.metric_id = metric.id
 LEFT JOIN organisation_geography ON organisation_geography.geography_id = g.rowid
-LEFT JOIN organisation AS o ON organisation_geography.organisation_id = o.id
+LEFT JOIN organisation AS o ON organisation_geography.organisation_id = o.entity
 WHERE json_valid(AsGeoJSON(GeomFromText(g.geometry))) = 1
 GROUP BY g.rowid;
 
@@ -42,7 +42,7 @@ INSERT INTO geography_geom (rowid, geojson_simple, geojson_full, type, geom_poin
 SELECT
     g.rowid AS rowid,
     json_object('type', 'Feature', 'id', g.rowid, 'properties', json_object('name', g.name, 'type', g.type, 'organisation', o.organisation, 'entity', g.entity, 'rowid', g.rowid, 'entry-date', g.entry_date, 'start-date', g.start_date, 'end-date', g.end_date), 'geometry', json(AsGeoJSON(Simplify(GeomFromText(g.point, 4326), 0.0005)))) AS geojson_simple,
-    json_object('type', 'Feature', 'id', g.rowid, 'properties', json_patch( json_object('name', g.name, 'type', g.type, 'organisation', o.organisation, 'entity', g.entity, 'rowid', g.rowid, 'entry-date', g.entry_date, 'start-date', g.start_date, 'end-date', g.end_date), json_group_object(metric.field, metric.value) ), 'geometry', json(AsGeoJSON(GeomFromText(g.point, 4326)))) AS geojson_full,
+    json_object('type', 'Feature', 'id', g.rowid, 'properties', json_patch( json_object('name', g.name, 'type', g.type, 'organisation', o.organisation, 'entity', g.entity, 'rowid', g.rowid, 'entry-date', g.entry_date, 'start-date', g.start_date, 'end-date', g.end_date), json_group_object(IFNULL(metric.field, ""), metric.value) ), 'geometry', json(AsGeoJSON(GeomFromText(g.point, 4326)))) AS geojson_full,
     g.type AS type,
     GeomFromText(g.point, 4326) AS geom_point
 FROM
@@ -50,7 +50,7 @@ FROM
 LEFT JOIN geography_metric ON geography_metric.geography_id = g.rowid
 LEFT JOIN metric ON geography_metric.metric_id = metric.id
 LEFT JOIN organisation_geography ON organisation_geography.geography_id = g.rowid
-LEFT JOIN organisation AS o ON organisation_geography.organisation_id = o.id
+LEFT JOIN organisation AS o ON organisation_geography.organisation_id = o.entity
 WHERE json_valid(AsGeoJSON(GeomFromText(g.point))) = 1
 GROUP BY g.rowid;
 
