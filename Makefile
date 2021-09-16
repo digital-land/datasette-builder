@@ -8,6 +8,8 @@ VIEW_CONFIG_DIR := config/view_model/
 TILE_CONFIG_DIR := config/tile_server/
 
 DATASETS=\
+	$(CACHE_DIR)digital-land.sqlite3\
+	\
 	$(CACHE_DIR)document-type.sqlite3\
 	$(CACHE_DIR)development-plan-type.sqlite3\
 	$(CACHE_DIR)development-policy-category.sqlite3\
@@ -124,3 +126,8 @@ $(CACHE_DIR)%.sqlite3:
 $(CACHE_DIR)historic-england/%.sqlite3:
 	@mkdir -p $(CACHE_DIR)/historic-england
 	curl -qfsL $(call dataset_url,$(basename $(notdir $@)),historic-england) > $@
+
+#  digital-land specification, collections, pipelines, logs, issues, etc
+$(CACHE_DIR)digital-land.sqlite3:
+	@mkdir -p $(CACHE_DIR)/
+	curl -qfsL 'https://digital-land-collection.s3.eu-west-2.amazonaws.com/digital-land.sqlite3' > $@
