@@ -4,9 +4,11 @@ BUILD_TAG_FACT := digitalland/fact_v2
 BUILD_TAG_TILE := digitalland/tile_v2
 CACHE_DIR := var/cache/
 VIEW_MODEL_DB := var/cache/view_model.sqlite3
+TILE_DB := var/cache/dataset_tiles.mbtiles
 DIGITAL_LAND_DB := var/cache/digital-land.sqlite3
 VIEW_CONFIG_DIR := config/view_model/
 TILE_CONFIG_DIR := config/tile_server/
+
 
 DATASETS=\
 	$(CACHE_DIR)document-type.sqlite3\
@@ -49,7 +51,7 @@ init::
 	pip3 uninstall -y view_builder
 	pip3 install -e git+https://github.com/digital-land/view-builder.git@entity_feature#egg=view_builder
 
-collect: $(CACHE_DIR)organisation.csv $(DATASETS) $(DIGITAL_LAND_DB)
+collect: $(CACHE_DIR)organisation.csv $(DATASETS) $(DIGITAL_LAND_DB) $(VIEW_MODEL_DB) $(TILE_DB)
 
 build: docker-check $(DIGITAL_LAND_DB)
 	datasette_builder build-view-queries $(VIEW_CONFIG_DIR)
@@ -80,37 +82,6 @@ ifeq (, $(shell which docker))
 	$(error "No docker in $(PATH), consider doing apt-get install docker OR brew install --cask docker")
 endif
 
-tippecanoe-check:
-ifeq (, $(shell which tippecanoe))
-	git clone https://github.com/mapbox/tippecanoe.git
-	cd tippecanoe
-	make -j
-	make install
-endif
-
-
-build-view-model: $(VIEW_MODEL_DB)
-
-$(VIEW_MODEL_DB): $(CACHE_DIR)organisation.csv
-	@rm -f $@
-	view_builder create $@
-	view_builder load_organisations $@
-	# this should be in shell or python ..
-	for f in $(DATASETS) ; do echo $$f ; view_builder build --allow-broken-relationships $$(basename $$f .sqlite3) $$f $@ ; done
-
-
-postprocess-view-model:
-	docker build -t sqlite3-spatialite -f SqliteDockerfile .
-	docker run -t --mount src=$(shell pwd),target=/tmp,type=bind sqlite3-spatialite -init ./post_process.sql -bail -echo  /tmp/$(CACHE_DIR)view_model.sqlite3 .exit
-
-generate-tiles: tippecanoe-check
-	datasette_builder build-tiles $(VIEW_MODEL_DB) $(CACHE_DIR)
-	sed -i '1s/^/{"type":"FeatureCollection","features":[/' $(CACHE_DIR)geometry.txt
-	echo ']}' >> $(CACHE_DIR)geometry.txt
-	tr '\n' , < $(CACHE_DIR)geometry.txt > $(CACHE_DIR)geometry.geojson
-	tippecanoe -z15 -Z4 -r1 --no-feature-limit --no-tile-size-limit -o $(CACHE_DIR)dataset_tiles.mbtiles $(CACHE_DIR)geometry.geojson
-
-
 $(CACHE_DIR)organisation.csv:
 	@mkdir -p $(CACHE_DIR)
 	curl -qfsL "$(SOURCE_URL)organisation-dataset/main/collection/organisation.csv" > $(CACHE_DIR)organisation.csv
@@ -130,3 +101,11 @@ $(CACHE_DIR)historic-england/%.sqlite3:
 $(DIGITAL_LAND_DB):
 	@mkdir -p $(CACHE_DIR)
 	curl -qfsL 'https://digital-land-collection.s3.eu-west-2.amazonaws.com/digital-land.sqlite3' > $@
+
+$(VIEW_MODEL_DB):
+	@mkdir -p $(CACHE_DIR)
+	curl -qfsL 'https://digital-land-view-model.s3.eu-west-2.amazonaws.com/view_model.sqlite3' > $@
+
+$(TILE_DB):
+	@mkdir -p $(CACHE_DIR)
+	curl -qfsL 'https://digital-land-view-model.s3.eu-west-2.amazonaws.com/dataset_tiles.mbtiles' > $@
