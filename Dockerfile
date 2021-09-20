@@ -12,4 +12,4 @@ ADD settings.json .
 ARG DATASETS
 ENV DIGITAL_LAND_DATASETS ${DATASETS}
 
-CMD gunicorn app:app -k uvicorn.workers.UvicornWorker -b 0.0.0.0:5000
+CMD gunicorn app:app -t 60 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:5000
