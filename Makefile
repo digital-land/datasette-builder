@@ -51,7 +51,8 @@ init::
 	pip3 uninstall -y view_builder
 	pip3 install -e git+https://github.com/digital-land/view-builder.git@entity_feature#egg=view_builder
 
-collect: $(CACHE_DIR)organisation.csv $(DATASETS) $(DIGITAL_LAND_DB) $(VIEW_MODEL_DB) $(TILE_DB)
+collect: $(CACHE_DIR)organisation.csv $(DATASETS) $(DIGITAL_LAND_DB)
+	aws s3 sync s3://digital-land-view-model $(CACHE_DIR) --exclude='*' --include='view_model.sqlite3' --include='*.mbtiles'
 
 build: docker-check $(DIGITAL_LAND_DB)
 	datasette_builder build-view-queries $(VIEW_CONFIG_DIR)
