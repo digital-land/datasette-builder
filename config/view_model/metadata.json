@@ -77,6 +77,14 @@
                 }
             }
         },
+        "digital-land" : {
+            "queries": {
+                "resource_view_data": {
+                    "sql": "SELECT GROUP_CONCAT(DISTINCT source.collection) AS collections, endpoint.endpoint_url AS endpoint_url, GROUP_CONCAT(DISTINCT source.organisation) AS organisations, resource.bytes AS bytes, MAX(log.entry_date) as last_collection_date, MIN(log.entry_date) as first_collection_date FROM resource JOIN resource_endpoint on resource_endpoint.resource = :resource JOIN endpoint ON endpoint.endpoint = resource_endpoint.endpoint JOIN source ON source.endpoint = resource_endpoint.endpoint JOIN log ON log.resource = :resource WHERE resource.resource = :resource GROUP BY endpoint.endpoint",
+                    "title": "Get resource view data"
+                }
+            }
+        },
         "development-plan-document": {
             "tables": {
                 "entry": {
