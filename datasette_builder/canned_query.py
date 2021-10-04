@@ -1,5 +1,5 @@
-from view_builder.model.table import Base
 from sqlalchemy.inspection import inspect
+from view_builder.model.table import Base
 
 excluded_relationships = ["organisation", "metric"]
 
@@ -69,15 +69,12 @@ def generate_join_query(original_model, related_model):
         original_table = original_model.__tablename__
         sql_query = (
             f"SELECT "
-            f"{related_table}.id AS id, "
+            f"{related_table}.entity AS entity, "
             f"{related_table}.{related_table} as reference, "
             f"{related_table}.name as name, "
-            f"slug.id AS gid, "
-            f"slug.slug AS href, "
             f"'{related_table}' as type "
             f"FROM {related_table} "
-            f"INNER JOIN {join_table} ON ({join_table}.{related_table}_id = {related_table}.id "
+            f"INNER JOIN {join_table} ON ({join_table}.{related_table}_id = {related_table}.entity "
             f"AND {join_table}.{original_table}_id = :{original_table}) "
-            f"INNER JOIN slug on slug.id={related_table}.slug_id"
         )
     return sql_query

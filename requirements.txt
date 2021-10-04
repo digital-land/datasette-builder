@@ -1,5 +1,5 @@
 -e git+https://github.com/digital-land/digital-land-python.git#egg=digital-land
-datasette
+-e git+https://github.com/digital-land/datasette@allow-bidirectional-joins#egg=datasette
 Click
 pytest
 PyGithub

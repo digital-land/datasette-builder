@@ -16,6 +16,12 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.8
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-west-2
     - name: Install spatialite
       run: |
         sudo apt-get update
@@ -41,20 +47,9 @@ jobs:
     - name: Collect
       run: |
         make collect
-    - name: Build View Model
-      run: |
-        make build-view-model
-        make postprocess-view-model
-        make generate-tiles
     - name: Build Docker
       run: |
         make build
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: eu-west-2
     - name: Login to DockerHub
       uses: docker/login-action@v1
       with:
@@ -69,11 +64,12 @@ jobs:
         time: '30s'
     - name: Deploy
       run: |
-        aws elasticbeanstalk update-environment --application-name datasette-aws-docker --environment-name Datasetteawsdocker-env --version-label datasette-aws-docker-4
-        aws elasticbeanstalk update-environment --application-name datasette-tile-server --environment-name Datasettetileserver-env --version-label datasette-tile-server-source-2
+        aws elasticbeanstalk update-environment --application-name datasette-aws-entity-v2 --environment-name Datasetteawsentityv2-env --version-label datasette-entity-v2-source-2
+        aws elasticbeanstalk update-environment --application-name Datasette-tile-server-v2 --environment-name Datasettetileserverv2-env --version-label datasette-tile-server-v2-source
     - name: Docker images
       run: |
         docker images
     - name: Docker ps
       run: |
         docker ps -a
+        

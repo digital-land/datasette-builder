@@ -14,9 +14,6 @@
             "tables": {
                 "geography": {
                     "size": 10
-                },
-                "slug": {
-                    "label_column": "slug"
                 }
             },
             "queries": {
@@ -56,12 +53,36 @@
                     "sql": "SELECT json_insert(gg.geojson_full, '$.properties.hectares', (select m.value from metric as m join geography_metric gm on m.rowid = gm.metric_id where gm.geography_id = gg.rowid and m.field='hectares')) AS geojson FROM geography_geom AS gg WHERE gg.rowid > :after AND gg.type = :type AND Within(gg.geom_point, BuildMbr(CAST(:bbox_minx AS DOUBLE), CAST(:bbox_miny AS DOUBLE), CAST(:bbox_maxx AS DOUBLE), CAST(:bbox_maxy AS DOUBLE), 4326)) ORDER BY rowid limit 100",
                     "title": "Points inside bounding box page size 100 BFL"
                 },
+                "geography_datasets_for_organisation": {
+                    "sql": "SELECT DISTINCT geography.type FROM geography INNER JOIN organisation_geography ON organisation_geography.geography_id = geography.entity INNER JOIN organisation ON organisation_geography.organisation_id = organisation.entity WHERE organisation.organisation = :organisation",
+                    "title": "Geography datasets corresponding to an organisation"
+                },
+                "typology_organisation_by_entity": {
+                    "sql": "SELECT o.* FROM organisation AS o WHERE o.entity = :entity",
+                    "title": "Get complete organisation entity"
+                },
+                "typology_geography_by_entity": {
+                    "sql": "SELECT g.*, gg.geojson_full, GROUP_CONCAT(o.organisation, ';') AS organisations FROM geography AS g LEFT OUTER JOIN geography_geom AS gg ON g.rowid = gg.rowid LEFT OUTER JOIN organisation_geography AS og ON g.rowid = og.geography_id INNER JOIN organisation AS o ON o.rowid = og.organisation_id WHERE g.entity = :entity",
+                    "title": "Get complete geography entity"
+                },
+                "typology_category_by_entity": {
+                    "sql": "SELECT c.* FROM category AS c WHERE c.entity = :entity",
+                    "title": "Get complete category entity"
+                },
+                "typology_document_by_entity": {
+                    "sql": "SELECT d.*, GROUP_CONCAT(o.organisation, ';') AS organisations, GROUP_CONCAT(c.category, ';') AS categories FROM document AS d LEFT OUTER JOIN document_organisation AS do ON d.rowid = do.document_id INNER JOIN organisation AS o ON o.rowid = do.organisation_id LEFT OUTER JOIN document_category AS dc ON d.rowid = dc.document_id INNER JOIN category AS c ON dc.category_id = c.rowid WHERE d.entity = :entity",
+                    "title": "Get complete document entity"
+                },
+                "typology_policy_by_entity": {
+                    "sql": "SELECT p.*, GROUP_CONCAT(o.organisation, ';') AS organisations, GROUP_CONCAT(gg.geojson_full, ';') AS geometry, GROUP_CONCAT(g.geography, ';') AS geographies, GROUP_CONCAT(c.category) AS categories FROM policy AS p LEFT OUTER JOIN policy_organisation AS po ON p.rowid = po.policy_id INNER JOIN organisation AS o ON po.organisation_id = o.rowid LEFT OUTER JOIN policy_geography AS pg ON p.rowid = pg.policy_id INNER JOIN geography AS g on pg.geography_id = g.rowid INNER JOIN geography_geom AS gg ON pg.geography_id = gg.rowid LEFT OUTER JOIN policy_category AS pc ON p.rowid = pc.policy_id INNER JOIN category AS c ON pc.category_id = c.rowid WHERE p.entity = :entity",
+                    "title": "Get complete document entity"
+                },
                 "get_category_id": {
                     "sql": "SELECT id, type FROM category WHERE category=:category",
                     "title": "Get category id by reference"
                 },
                 "get_category_references": {
-                    "sql": "SELECT * FROM (SELECT document.id AS id, document.document as reference, document.name as name, slug.id AS gid, slug.slug AS href, 'document' as type FROM document INNER JOIN document_category ON (document_category.document_id = document.id AND document_category.category_id = :category) INNER JOIN slug on slug.id=document.slug_id UNION ALL SELECT policy.id AS id, policy.policy as reference, policy.name as name, slug.id AS gid, slug.slug AS href, 'policy' as type FROM policy INNER JOIN policy_category ON (policy_category.policy_id = policy.id AND policy_category.category_id = :category) INNER JOIN slug on slug.id=policy.slug_id UNION ALL SELECT geography.id AS id, geography.geography as reference, geography.name as name, slug.id AS gid, slug.slug AS href, 'geography' as type FROM geography INNER JOIN geography_category ON (geography_category.geography_id = geography.id AND geography_category.category_id = :category) INNER JOIN slug on slug.id=geography.slug_id) WHERE gid > :gid ORDER BY gid",
+                    "sql": "SELECT * FROM (SELECT document.entity AS entity, document.document as reference, document.name as name, 'document' as type FROM document INNER JOIN document_category ON (document_category.document_id = document.entity AND document_category.category_id = :category)  UNION ALL SELECT policy.entity AS entity, policy.policy as reference, policy.name as name, 'policy' as type FROM policy INNER JOIN policy_category ON (policy_category.policy_id = policy.entity AND policy_category.category_id = :category)  UNION ALL SELECT geography.entity AS entity, geography.geography as reference, geography.name as name, 'geography' as type FROM geography INNER JOIN geography_category ON (geography_category.geography_id = geography.entity AND geography_category.category_id = :category) )",
                     "title": "Get all references for category"
                 },
                 "get_organisation_id": {
@@ -73,7 +94,7 @@
                     "title": "Get geography id by reference"
                 },
                 "get_geography_references": {
-                    "sql": "SELECT * FROM (SELECT policy.id AS id, policy.policy as reference, policy.name as name, slug.id AS gid, slug.slug AS href, 'policy' as type FROM policy INNER JOIN policy_geography ON (policy_geography.policy_id = policy.id AND policy_geography.geography_id = :geography) INNER JOIN slug on slug.id=policy.slug_id UNION ALL SELECT document.id AS id, document.document as reference, document.name as name, slug.id AS gid, slug.slug AS href, 'document' as type FROM document INNER JOIN document_geography ON (document_geography.document_id = document.id AND document_geography.geography_id = :geography) INNER JOIN slug on slug.id=document.slug_id UNION ALL SELECT category.id AS id, category.category as reference, category.name as name, slug.id AS gid, slug.slug AS href, 'category' as type FROM category INNER JOIN geography_category ON (geography_category.category_id = category.id AND geography_category.geography_id = :geography) INNER JOIN slug on slug.id=category.slug_id) WHERE gid > :gid ORDER BY gid",
+                    "sql": "SELECT * FROM (SELECT policy.entity AS entity, policy.policy as reference, policy.name as name, 'policy' as type FROM policy INNER JOIN policy_geography ON (policy_geography.policy_id = policy.entity AND policy_geography.geography_id = :geography)  UNION ALL SELECT document.entity AS entity, document.document as reference, document.name as name, 'document' as type FROM document INNER JOIN document_geography ON (document_geography.document_id = document.entity AND document_geography.geography_id = :geography)  UNION ALL SELECT category.entity AS entity, category.category as reference, category.name as name, 'category' as type FROM category INNER JOIN geography_category ON (geography_category.category_id = category.entity AND geography_category.geography_id = :geography) )",
                     "title": "Get all references for geography"
                 },
                 "get_policy_id": {
@@ -81,7 +102,7 @@
                     "title": "Get policy id by reference"
                 },
                 "get_policy_references": {
-                    "sql": "SELECT * FROM (SELECT document.id AS id, document.document as reference, document.name as name, slug.id AS gid, slug.slug AS href, 'document' as type FROM document INNER JOIN policy_document ON (policy_document.document_id = document.id AND policy_document.policy_id = :policy) INNER JOIN slug on slug.id=document.slug_id UNION ALL SELECT category.id AS id, category.category as reference, category.name as name, slug.id AS gid, slug.slug AS href, 'category' as type FROM category INNER JOIN policy_category ON (policy_category.category_id = category.id AND policy_category.policy_id = :policy) INNER JOIN slug on slug.id=category.slug_id UNION ALL SELECT geography.id AS id, geography.geography as reference, geography.name as name, slug.id AS gid, slug.slug AS href, 'geography' as type FROM geography INNER JOIN policy_geography ON (policy_geography.geography_id = geography.id AND policy_geography.policy_id = :policy) INNER JOIN slug on slug.id=geography.slug_id) WHERE gid > :gid ORDER BY gid",
+                    "sql": "SELECT * FROM (SELECT document.entity AS entity, document.document as reference, document.name as name, 'document' as type FROM document INNER JOIN policy_document ON (policy_document.document_id = document.entity AND policy_document.policy_id = :policy)  UNION ALL SELECT category.entity AS entity, category.category as reference, category.name as name, 'category' as type FROM category INNER JOIN policy_category ON (policy_category.category_id = category.entity AND policy_category.policy_id = :policy)  UNION ALL SELECT geography.entity AS entity, geography.geography as reference, geography.name as name, 'geography' as type FROM geography INNER JOIN policy_geography ON (policy_geography.geography_id = geography.entity AND policy_geography.policy_id = :policy) )",
                     "title": "Get all references for policy"
                 },
                 "get_document_id": {
@@ -89,7 +110,7 @@
                     "title": "Get document id by reference"
                 },
                 "get_document_references": {
-                    "sql": "SELECT * FROM (SELECT category.id AS id, category.category as reference, category.name as name, slug.id AS gid, slug.slug AS href, 'category' as type FROM category INNER JOIN document_category ON (document_category.category_id = category.id AND document_category.document_id = :document) INNER JOIN slug on slug.id=category.slug_id UNION ALL SELECT policy.id AS id, policy.policy as reference, policy.name as name, slug.id AS gid, slug.slug AS href, 'policy' as type FROM policy INNER JOIN policy_document ON (policy_document.policy_id = policy.id AND policy_document.document_id = :document) INNER JOIN slug on slug.id=policy.slug_id UNION ALL SELECT geography.id AS id, geography.geography as reference, geography.name as name, slug.id AS gid, slug.slug AS href, 'geography' as type FROM geography INNER JOIN document_geography ON (document_geography.geography_id = geography.id AND document_geography.document_id = :document) INNER JOIN slug on slug.id=geography.slug_id) WHERE gid > :gid ORDER BY gid",
+                    "sql": "SELECT * FROM (SELECT category.entity AS entity, category.category as reference, category.name as name, 'category' as type FROM category INNER JOIN document_category ON (document_category.category_id = category.entity AND document_category.document_id = :document)  UNION ALL SELECT policy.entity AS entity, policy.policy as reference, policy.name as name, 'policy' as type FROM policy INNER JOIN policy_document ON (policy_document.policy_id = policy.entity AND policy_document.document_id = :document)  UNION ALL SELECT geography.entity AS entity, geography.geography as reference, geography.name as name, 'geography' as type FROM geography INNER JOIN document_geography ON (document_geography.geography_id = geography.entity AND document_geography.document_id = :document) )",
                     "title": "Get all references for document"
                 }
             }

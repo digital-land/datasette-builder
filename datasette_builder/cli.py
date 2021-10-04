@@ -27,14 +27,12 @@ def collect(config_path):
 
 
 @click.command()
-@click.argument(
-    "metadata_path", type=click.Path(exists=True), default="./metadata.json"
-)
+@click.argument("metadata_path", type=click.Path(exists=True), default="./")
 def build_view_queries(metadata_path):
     with open(Path(metadata_path) / "metadata.json", "r") as json_file:
         metadata = defaultdict(None, json.load(json_file))
 
-    canned_queries = generate_model_canned_queries()
+    canned_queries = generate_model_canned_queries(pagination=False)
     metadata["databases"]["view_model"]["queries"].update(canned_queries)
 
     with open(Path(metadata_path) / "metadata_generated.json", "w") as json_file:
