@@ -1,4 +1,4 @@
-name: Continuous Integration
+name: Build and deploy datasette
 on:
   push:
   workflow_dispatch:
@@ -72,4 +72,3 @@ jobs:
     - name: Docker ps
       run: |
         docker ps -a
-        

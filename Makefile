@@ -109,7 +109,7 @@ $(CACHE_DIR)developer-contributions-collection/%.sqlite3:
 #  digital-land specification, collections, pipelines, logs, issues, etc
 $(DIGITAL_LAND_DB):
 	@mkdir -p $(CACHE_DIR)
-	curl -qfsL 'https://digital-land-collection.s3.eu-west-2.amazonaws.com/digital-land.sqlite3' > $@
+	curl -qfsL 's3://collection-dataset/digital-land-builder/dataset/digital-land.sqlite3' > $@
 
 $(VIEW_MODEL_DB):
 	@mkdir -p $(CACHE_DIR)
