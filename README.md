@@ -1,5 +1,8 @@
 # Datasette Builder
 
+[![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/digital-land/datasette-builder/blob/master/LICENSE)
+[![Build and deploy datasette](https://github.com/digital-land/datasette-builder/actions/workflows/build.yml/badge.svg)](https://github.com/digital-land/datasette-builder/actions/workflows/build.yml)
+
 This repository runs a scheduled github workflow to collect together sqlite3 EAV databases and package them as datasette docker images.
 
 # Licence
