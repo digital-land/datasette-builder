@@ -1,6 +1,5 @@
 name: Build and deploy datasette
 on:
-  push:
   workflow_dispatch:
 
 jobs:
