@@ -43,8 +43,15 @@ DATASETS=\
 	$(CACHE_DIR)historic-england/world-heritage-site.sqlite3\
 	$(CACHE_DIR)special-area-of-conservation.sqlite3\
 	$(CACHE_DIR)ramsar.sqlite3\
-	$(CACHE_DIR)site-of-special-scientific-interest.sqlite3\
-	$(CACHE_DIR)article-4-direction.sqlite3
+    $(CACHE_DIR)site-of-special-scientific-interest.sqlite3\
+	$(CACHE_DIR)article-4-direction.sqlite3\
+	$(CACHE_DIR)infrastructure-funding-statement.sqlite3\
+	$(CACHE_DIR)developer-contributions-collection/contribution-funding-status.sqlite3\
+	$(CACHE_DIR)developer-contributions-collection/contribution-purpose.sqlite3\
+	$(CACHE_DIR)developer-contributions-collection/developer-agreement-contribution.sqlite3\
+	$(CACHE_DIR)developer-contributions-collection/developer-agreement-transaction.sqlite3\
+	$(CACHE_DIR)developer-contributions-collection/developer-agreement-type.sqlite3\
+	$(CACHE_DIR)developer-contributions-collection/developer-agreement.sqlite3
 
 all:: build
 
@@ -94,6 +101,10 @@ $(CACHE_DIR)%.sqlite3:
 $(CACHE_DIR)historic-england/%.sqlite3:
 	@mkdir -p $(CACHE_DIR)/historic-england
 	curl -qfsL $(call dataset_url,$(basename $(notdir $@)),historic-england) > $@
+
+$(CACHE_DIR)developer-contributions-collection/%.sqlite3:
+	@mkdir -p $(CACHE_DIR)/developer-contributions-collection
+	curl -qfsL $(call dataset_url,$(basename $(notdir $@)),developer-contributions) > $@
 
 #  digital-land specification, collections, pipelines, logs, issues, etc
 $(DIGITAL_LAND_DB):
