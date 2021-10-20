@@ -6,6 +6,7 @@ CACHE_DIR := var/cache/
 VIEW_MODEL_DB := var/cache/view_model.sqlite3
 TILE_DB := var/cache/dataset_tiles.mbtiles
 DIGITAL_LAND_DB := var/cache/digital-land.sqlite3
+ENTITY_DB := var/cache/entity.sqlite3
 VIEW_CONFIG_DIR := config/view_model/
 TILE_CONFIG_DIR := config/tile_server/
 
@@ -56,10 +57,10 @@ DATASETS=\
 
 all:: build
 
-collect: $(CACHE_DIR)organisation.csv $(DATASETS) $(DIGITAL_LAND_DB)
+collect: $(CACHE_DIR)organisation.csv $(DATASETS) $(DIGITAL_LAND_DB) $(ENTITY_DB)
 	aws s3 sync s3://digital-land-view-model $(CACHE_DIR) --exclude='*' --include='view_model.sqlite3' --include='*.mbtiles'
 
-build: docker-check $(DIGITAL_LAND_DB)
+build: docker-check $(DIGITAL_LAND_DB) $(ENTITY_DB)
 	datasette_builder build-view-queries $(VIEW_CONFIG_DIR)
 	datasette_builder package --data-dir $(CACHE_DIR) --ext "sqlite3" --tag $(BUILD_TAG_FACT) --options "-m $(VIEW_CONFIG_DIR)metadata_generated.json,--install=datasette-leaflet-geojson,--install=datasette-cors"
 	datasette_builder package --data-dir $(CACHE_DIR) --ext "mbtiles" --tag $(BUILD_TAG_TILE) --options "-m $(TILE_CONFIG_DIR)metadata.json,--install=datasette-cors,--install=datasette-tiles,--plugins-dir=$(TILE_CONFIG_DIR)plugins/"
@@ -106,6 +107,11 @@ $(CACHE_DIR)historic-england/%.sqlite3:
 $(CACHE_DIR)developer-contributions-collection/%.sqlite3:
 	@mkdir -p $(CACHE_DIR)/developer-contributions-collection
 	curl -qfsL $(call dataset_url,$(basename $(notdir $@)),developer-contributions) > $@
+
+#  entity index
+$(ENTITY_DB):
+	@mkdir -p $(CACHE_DIR)
+	curl -qfsL 'https://collection-dataset.s3.eu-west-2.amazonaws.com/entity-builder/dataset/entity.sqlite3' > $@
 
 #  digital-land specification, collections, pipelines, logs, issues, etc
 $(DIGITAL_LAND_DB):
