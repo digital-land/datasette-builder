@@ -52,8 +52,36 @@
                     "title": "Points inside bounding box page size 100 BFL"
                 },
                 "geography_datasets_for_organisation" : {
-                    "sql": "SELECT DISTINCT geography.type FROM geography INNER JOIN organisation_geography ON organisation_geography.geography_id = geography.id INNER JOIN organisation ON organisation_geography.organisation_id = organisation.id WHERE organisation.organisation = :organisation",
+                    "sql": "SELECT DISTINCT geography.type FROM geography INNER JOIN organisation_geography ON organisation_geography.geography_id = geography.entity INNER JOIN organisation ON organisation_geography.organisation_id = organisation.entity WHERE organisation.organisation = :organisation",
                     "title": "Geography datasets corresponding to an organisation"
+                },
+                "typology_organisation_by_entity": {
+                    "sql": "SELECT o.* FROM organisation AS o WHERE o.entity = :entity",
+                    "title": "Get complete organisation entity"
+                },
+                "typology_geography_by_entity": {
+                    "sql": "SELECT g.*, gg.geojson_full, GROUP_CONCAT(o.organisation, ';') AS organisations FROM geography AS g LEFT OUTER JOIN geography_geom AS gg ON g.rowid = gg.rowid LEFT OUTER JOIN organisation_geography AS og ON g.rowid = og.geography_id INNER JOIN organisation AS o ON o.rowid = og.organisation_id WHERE g.entity = :entity",
+                    "title": "Get complete geography entity"
+                },
+                "typology_category_by_entity": {
+                    "sql": "SELECT c.* FROM category AS c WHERE c.entity = :entity",
+                    "title": "Get complete category entity"
+                },
+                "typology_document_by_entity": {
+                    "sql": "SELECT d.*, GROUP_CONCAT(o.organisation, ';') AS organisations, GROUP_CONCAT(c.category, ';') AS categories FROM document AS d LEFT OUTER JOIN document_organisation AS do ON d.rowid = do.document_id INNER JOIN organisation AS o ON o.rowid = do.organisation_id LEFT OUTER JOIN document_category AS dc ON d.rowid = dc.document_id INNER JOIN category AS c ON dc.category_id = c.rowid WHERE d.entity = :entity",
+                    "title": "Get complete document entity"
+                },
+                "typology_policy_by_entity": {
+                    "sql": "SELECT p.*, GROUP_CONCAT(o.organisation, ';') AS organisations, GROUP_CONCAT(gg.geojson_full, ';') AS geometry, GROUP_CONCAT(g.geography, ';') AS geographies, GROUP_CONCAT(c.category) AS categories FROM policy AS p LEFT OUTER JOIN policy_organisation AS po ON p.rowid = po.policy_id INNER JOIN organisation AS o ON po.organisation_id = o.rowid LEFT OUTER JOIN policy_geography AS pg ON p.rowid = pg.policy_id INNER JOIN geography AS g on pg.geography_id = g.rowid INNER JOIN geography_geom AS gg ON pg.geography_id = gg.rowid LEFT OUTER JOIN policy_category AS pc ON p.rowid = pc.policy_id INNER JOIN category AS c ON pc.category_id = c.rowid WHERE p.entity = :entity",
+                    "title": "Get complete document entity"
+                }
+            }
+        },
+        "digital-land" : {
+            "queries": {
+                "resource_view_data": {
+                    "sql": "SELECT GROUP_CONCAT(DISTINCT source.collection) AS collections, endpoint.endpoint_url AS endpoint_url, GROUP_CONCAT(DISTINCT source.organisation) AS organisations, resource.bytes AS bytes, MAX(log.entry_date) as last_collection_date, MIN(log.entry_date) as first_collection_date FROM resource JOIN resource_endpoint on resource_endpoint.resource = :resource JOIN endpoint ON endpoint.endpoint = resource_endpoint.endpoint JOIN source ON source.endpoint = resource_endpoint.endpoint JOIN log ON log.endpoint = resource_endpoint.endpoint WHERE resource.resource = :resource GROUP BY endpoint.endpoint",
+                    "title": "Get resource view data"
                 }
             }
         },

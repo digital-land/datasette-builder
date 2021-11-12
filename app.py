@@ -2,10 +2,9 @@ import logging
 from pathlib import Path
 
 from datasette.app import Datasette
-from environs import Env
+import os
 
-env = Env()
-datasets = env.list("DIGITAL_LAND_DATASETS")
+datasets = [f"{d}" for d in Path(os.getcwd()).rglob(f"*.sqlite3")]
 
 logger = logging.getLogger("gunicorn.error")
 logger.info(f"Starting server with datasets: {datasets}")
