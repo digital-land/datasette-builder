@@ -26,7 +26,6 @@ do
         curl -qsfL -o $path "$url" &
         set +x
     fi
-   # or do whatever with individual element of the array
 done
 
 IFS=,
@@ -45,7 +44,7 @@ do
 
     if [ ! -f $path ] ; then
         set -x
-        curl -qsfL -o $path "$url"
+        curl -qsfL -o $path "$url" &
         set +x
     fi
 done
