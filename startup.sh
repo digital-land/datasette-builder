@@ -12,9 +12,9 @@ dl_s3="https://digital-land-collection.s3.eu-west-2.amazonaws.com/"
 declare -a datasets=("entity" 
                 "digital-land"
                 )
-set +x
-date
 set -x
+date
+set +x
 
 for dataset in "${datasets[@]}"
 do
@@ -50,9 +50,9 @@ do
     fi
 done
 
-set +x
-date
 set -x
+date
+set +x
 
 gunicorn app:app -t 60 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:5000
 
