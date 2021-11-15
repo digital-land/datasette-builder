@@ -23,7 +23,7 @@ do
 
     if [ ! -f $path ] ; then
         set -x
-        curl -qsfL -o $path "$url" &
+        curl -qsfL -o $path "$url"
         set +x
     fi
 done
@@ -44,7 +44,7 @@ do
 
     if [ ! -f $path ] ; then
         set -x
-        curl -qsfL -o $path "$url" &
+        curl -qsfL -o $path "$url"
         set +x
     fi
 done
