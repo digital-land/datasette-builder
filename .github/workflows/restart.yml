@@ -1,4 +1,4 @@
-name: Build and deploy datasette
+name: Restart elasticbeanstalk datasette
 on:
   schedule:
   - cron: 0 5 * * *

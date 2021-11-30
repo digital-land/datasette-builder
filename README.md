@@ -5,6 +5,34 @@
 
 This repository contains files to build/run a docker image that will collect digital-land database files and serve them using Datasette.
 
+The sqlite databases are collected from the digital-land-collection S3 bukcet
+in the AWS digital land dev account on startup.
+
+It fetches the digital-land.sqlite3 and entity.sqlite3 databases.
+
+## Github action
+
+The github action is this repository does not rebuild the docker image, but rather updates the elasticbeanstalk
+enviroment. By update, in this case unless the docker image has changed in the dockerhub (more on that later) we just mean a restart using existing configuration. However it will reload the sqlite databases from the collection bucket thereby ensuring the data is up to date.
+
+The action runs daily.
+
+
+## Build & Deployment
+
+The application is running in Elasticbeanstalk in the digital land AWS dev account.
+
+Application name: datasette-aws-entity-v2
+Environment: Datasetteawsentityv2-env
+
+The docker image is built and pushed to dockerhub [https://hub.docker.com/r/digitalland/fact_v2_digital_land](https://hub.docker.com/r/digitalland/fact_v2_digital_land)
+
+The build of the image, push to dockerhub and inital Elasticbeanstalk was most likely
+done directly from a developer machine.
+
+The Elascticbeanstalk applicationuses this run configuration [Dockerrun.aws.json](Dockerrun.aws.json)
+
+
 # Licence
 
 The software in this project is open source and covered by the [LICENSE](LICENSE) file.
