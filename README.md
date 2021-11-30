@@ -22,15 +22,16 @@ The action runs daily.
 
 The application is running in Elasticbeanstalk in the digital land AWS dev account.
 
-Application name: datasette-aws-entity-v2
-Environment: Datasetteawsentityv2-env
+1. Application name: datasette-aws-entity-v2
+
+2. Environment: Datasetteawsentityv2-env
 
 The docker image is built and pushed to dockerhub [https://hub.docker.com/r/digitalland/fact_v2_digital_land](https://hub.docker.com/r/digitalland/fact_v2_digital_land)
 
 The build of the image, push to dockerhub and inital Elasticbeanstalk was most likely
 done directly from a developer machine.
 
-The Elascticbeanstalk applicationuses this run configuration [Dockerrun.aws.json](Dockerrun.aws.json)
+The Elascticbeanstalk application uses this run configuration [Dockerrun.aws.json](Dockerrun.aws.json)
 
 
 # Licence
