@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 mkdir -p specification
 curl -qfsL 'https://raw.githubusercontent.com/digital-land/specification/main/specification/dataset.csv' > specification/dataset.csv 
 
@@ -54,5 +52,4 @@ date
 set +x
 
 gunicorn app:app -t 60 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:5000
-
 
