@@ -43,9 +43,13 @@ do
     path=$dataset.sqlite3
 
     if [ ! -f $path ] ; then
-        set -x
-        curl -qsfL -o $path "$url"
-        set +x
+        if [[ $path =~ "*tree-preservation*" ]]; then
+            set -x
+            curl -qsfL -o $path "$url"
+            set +x
+        else
+            echo "Temporarily skip $path url $url"
+        fi
     fi
 done
 
@@ -53,6 +57,6 @@ set -x
 date
 set +x
 
-gunicorn app:app -t 60 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:5000
+# gunicorn app:app -t 60 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:5000
 
 

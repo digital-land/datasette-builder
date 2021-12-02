@@ -21,3 +21,4 @@ specification/
 
 # don't checkin the target
 view_model.db
+.python-version
