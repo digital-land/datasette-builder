@@ -22,3 +22,6 @@ specification/
 # don't checkin the target
 view_model.db
 .python-version
+*.sqlite3
+.idea
+*.xml

@@ -43,13 +43,9 @@ do
     path=$dataset.sqlite3
 
     if [ ! -f $path ] ; then
-        if [[ $path =~ "*tree-preservation*" ]]; then
-            set -x
-            curl -qsfL -o $path "$url"
-            set +x
-        else
-            echo "Temporarily skip $path url $url"
-        fi
+        set -x
+        curl -qsfL -o $path "$url"  || continue
+        set +x
     fi
 done
 
