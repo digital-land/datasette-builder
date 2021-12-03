@@ -1,7 +1,7 @@
 include makerules/makerules.mk
 
 # TODO add this ECR repository to terraform
-BUILD_TAG_FACT := d955696714113.dkr.ecr.eu-west-2.amazonaws.com/fact_v2
+BUILD_TAG_FACT := d955696714113.dkr.ecr.eu-west-2.amazonaws.com/digital_land_datasette
 
 
 all:: build
