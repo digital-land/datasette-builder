@@ -9,8 +9,10 @@ all:: build
 build: docker-check
 	docker build -t $(BUILD_TAG_FACT) .
 
+login-docker:
+	aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 955696714113.dkr.ecr.eu-west-2.amazonaws.com
 
-push: docker-check
+push: docker-check login-docker
 	docker push $(BUILD_TAG_FACT)
 
 
