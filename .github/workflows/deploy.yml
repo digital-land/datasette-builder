@@ -1,4 +1,4 @@
-name: Restart elasticbeanstalk datasette
+name: Build and deploy datasette
 on:
   schedule:
   - cron: 0 5 * * *
@@ -25,4 +25,5 @@ jobs:
         aws-region: eu-west-2
     - name: Deploy
       run: |
-        aws elasticbeanstalk update-environment --application-name datasette-aws-entity-v2 --environment-name Datasetteawsentityv2-env --version-label datasette-entity-v2-source-2
+        make build
+        make push

@@ -14,7 +14,7 @@ login-docker:
 
 push: docker-check login-docker
 	docker push $(BUILD_TAG_FACT)
-
+	aws elasticbeanstalk update-environment --application-name datasette-aws-entity-v2 --environment-name Datasetteawsentityv2-env --version-label datasette-entity-v2-source-2
 
 docker-check:
 ifeq (, $(shell which docker))

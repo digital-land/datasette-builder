@@ -19,6 +19,6 @@ EXPOSE 5000
 ADD app.py .
 ADD settings.json .
 ADD metadata.json .
-ADD fetch_and_run_datasette.sh /usr/local/bin/fetch_and_run_datasette.sh
+COPY startup.sh .
 
-ENTRYPOINT ["/usr/local/bin/fetch_and_run_datasette.sh"]
+ENTRYPOINT ["./startup.sh"]
