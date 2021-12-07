@@ -1,16 +1,19 @@
 include makerules/makerules.mk
 
-BUILD_TAG_FACT := digitalland/fact_v2
+# TODO add this ECR repository to terraform
+BUILD_TAG_FACT := d955696714113.dkr.ecr.eu-west-2.amazonaws.com/digital_land_datasette
 
 
 all:: build
 
-build: docker-check 
-	docker build -t $(BUILD_TAG_FACT)_digital_land .
+build: docker-check
+	docker build -t $(BUILD_TAG_FACT) .
 
+login-docker:
+	aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 955696714113.dkr.ecr.eu-west-2.amazonaws.com
 
-push: docker-check
-	docker push $(BUILD_TAG_FACT)_digital_land
+push: docker-check login-docker
+	docker push $(BUILD_TAG_FACT)
 
 
 docker-check:
