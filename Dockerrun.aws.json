@@ -1,7 +1,7 @@
 {
     "AWSEBDockerrunVersion": "1",
     "Image": {
-       "Name": "digital_land_datasette",
+       "Name": "digitalland/fact_v2_digital_land",
        "Update": "true"
     },
     "Ports": [
