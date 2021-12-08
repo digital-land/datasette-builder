@@ -1,7 +1,8 @@
 include makerules/makerules.mk
 
 # TODO add this ECR repository to terraform
-BUILD_TAG_FACT := d955696714113.dkr.ecr.eu-west-2.amazonaws.com/digital_land_datasette
+BUILD_REPO := 955696714113.dkr.ecr.eu-west-2.amazonaws.com
+BUILD_TAG_FACT := $(BUILD_REPO)/digital_land_datasette
 
 
 all:: build
@@ -10,7 +11,7 @@ build: docker-check
 	docker build -t $(BUILD_TAG_FACT) .
 
 login-docker:
-	aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 955696714113.dkr.ecr.eu-west-2.amazonaws.com
+	aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin $(BUILD_REPO)
 
 push: docker-check login-docker
 	docker push $(BUILD_TAG_FACT)
