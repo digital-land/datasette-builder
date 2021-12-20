@@ -12,7 +12,7 @@ set +x
 
 set -x
 curl -qsfL -o digital-land.sqlite3 ${dl_s3}digital-land.sqlite3
-curl -qsfL -o entity.sqlite3 ${collection_s3}entity.sqlite3
+curl -qsfL -o entity.sqlite3 ${collection_s3}entity-builder/dataset/entity.sqlite3
 
 IFS=,
 csvcut -c dataset,collection specification/dataset.csv |
