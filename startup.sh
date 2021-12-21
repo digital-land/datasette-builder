@@ -3,15 +3,15 @@
 mkdir -p specification
 curl -qfsL 'https://raw.githubusercontent.com/digital-land/specification/main/specification/dataset.csv' > specification/dataset.csv 
 
+#dl_s3="https://digital-land-collection.s3.eu-west-2.amazonaws.com/"
 collection_s3="https://collection-dataset.s3.eu-west-2.amazonaws.com/"
-dl_s3="https://digital-land-collection.s3.eu-west-2.amazonaws.com/"
 
 set -x
 date
 set +x
 
 set -x
-curl -qsfL -o digital-land.sqlite3 ${dl_s3}digital-land.sqlite3
+curl -qsfL -o digital-land.sqlite3 ${collection_s3}digital-land-builder/dataset/digital-land.sqlite3
 curl -qsfL -o entity.sqlite3 ${collection_s3}entity-builder/dataset/entity.sqlite3
 
 IFS=,
