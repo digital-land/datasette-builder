@@ -11,8 +11,9 @@ RUN pip install -U datasette
 
 RUN pip uninstall -y uvicorn
 RUN pip install uvicorn[standard] gunicorn environs
-RUN pip install -e git+https://github.com/digital-land/datasette@allow-bidirectional-joins#egg=datasette
 RUN pip install csvkit
+RUN pip install datasette
+RUN pip install datasette-leaflet-geojson
 RUN pip install datasette-block-robots
 
 EXPOSE 5000
