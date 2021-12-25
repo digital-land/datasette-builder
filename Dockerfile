@@ -7,7 +7,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 ENV SQLITE_EXTENSIONS '/usr/lib/x86_64-linux-gnu/mod_spatialite.so'
-RUN pip install -U datasette
 
 RUN pip uninstall -y uvicorn
 RUN pip install uvicorn[standard] gunicorn environs
