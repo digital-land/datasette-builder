@@ -12,8 +12,9 @@ set -x
 collection_s3="https://collection-dataset.s3.eu-west-2.amazonaws.com/"
 
 set -x
-curl -qsfL -o digital-land.sqlite3 ${collection_s3}digital-land-builder/dataset/digital-land.sqlite3
-curl -qsfL -o entity.sqlite3 ${collection_s3}entity-builder/dataset/entity.sqlite3
+# curl -qsfL -o digital-land.sqlite3 ${collection_s3}digital-land-builder/dataset/digital-land.sqlite3
+# curl -qsfL -o entity.sqlite3 ${collection_s3}entity-builder/dataset/entity.sqlite3
+curl -qsfL -o listed-building-grade.sqlite3 https://collection-dataset.s3.eu-west-2.amazonaws.com/listed-building-collection/dataset/listed-building-grade.sqlite
 set +x
 
 # don't download EAV datasets for now ..
@@ -25,7 +26,7 @@ then
         while read dataset collection
     do
         # current s3 structure has collection, but should be flattend
-        # https://collection-dataset.s3.eu-west-2.amazonaws.com/{COLLECTION}-collection/issue/{DATASET}/{DATASET}.sqlite3
+        # https://collection-dataset.s3.eu-west-2.amazonaws.com/{COLLECTION}-collection/dataset/{DATASET}/{DATASET}.sqlite3
         case "$collection" in
         ""|organisation) continue ;;
         esac
