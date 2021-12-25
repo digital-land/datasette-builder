@@ -1,7 +1,7 @@
 # Datasette Builder
 
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/digital-land/datasette-builder/blob/master/LICENSE)
-[![Restart elasticbeanstalk datasette](https://github.com/digital-land/datasette-builder/actions/workflows/restart.yml/badge.svg)](https://github.com/digital-land/datasette-builder/actions/workflows/restart.yml)
+[![Build and deploy datasette](https://github.com/digital-land/datasette-builder/actions/workflows/deploy.yml/badge.svg)](https://github.com/digital-land/datasette-builder/actions/workflows/deploy.yml)
 
 This repository contains files to build/run a docker image that will collect digital-land database files and serve them using Datasette.
 
