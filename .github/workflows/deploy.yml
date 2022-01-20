@@ -1,7 +1,7 @@
 name: Build and deploy datasette
 on:
   schedule:
-  - cron: 0 5 * * *
+  - cron: 0 7 * * *
   workflow_dispatch:
 
 jobs:
