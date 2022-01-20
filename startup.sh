@@ -19,30 +19,26 @@ curl -qsfL -o entity.sqlite3 ${collection_s3}entity-builder/dataset/entity.sqlit
 curl -qsfL -o listed-building-grade.sqlite3 https://collection-dataset.s3.eu-west-2.amazonaws.com/listed-building-collection/dataset/listed-building-grade.sqlite
 set +x
 
-# don't download EAV datasets ..
-if false
-then
-    IFS=,
-    csvcut -c dataset,collection specification/dataset.csv |
-        tail -n +2 |
-    while read dataset collection
-    do
-        # current s3 structure has collection, but should be flattend
-        # https://collection-dataset.s3.eu-west-2.amazonaws.com/{COLLECTION}-collection/dataset/{DATASET}/{DATASET}.sqlite3
-        case "$collection" in
-        ""|organisation) continue ;;
-        esac
+IFS=,
+csvcut -c dataset,collection specification/dataset.csv |
+    tail -n +2 |
+while read dataset collection
+do
+    # current s3 structure has collection, but should be flattend
+    # https://collection-dataset.s3.eu-west-2.amazonaws.com/{COLLECTION}-collection/dataset/{DATASET}/{DATASET}.sqlite3
+    case "$collection" in
+    ""|organisation) continue ;;
+    esac
 
-        url=$collection_s3$collection-collection/dataset/$dataset.sqlite3
-        path=$dataset.sqlite3
+    url=$collection_s3$collection-collection/dataset/$dataset.sqlite3
+    path=$dataset.sqlite3
 
-        if [ ! -f $path ] ; then
-            set -x
-            curl -qsfL -o $path "$url"  || continue
-            set +x
-        fi
-    done
-fi
+    if [ ! -f $path ] ; then
+        set -x
+        curl -qsfL -o $path "$url"  || continue
+        set +x
+    fi
+done
 
 set -x
 date
