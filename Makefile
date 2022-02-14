@@ -17,6 +17,7 @@ push: docker-check login-docker
 	docker push $(BUILD_TAG_FACT)
 	aws ecs update-service --force-new-deployment --service development-datasette-service --cluster development-datasette-cluster
 	aws ecs update-service --force-new-deployment --service staging-datasette-service --cluster staging-datasette-cluster
+	aws ecs update-service --force-new-deployment --service production-datasette-service --cluster production-datasette-cluster
 
 docker-check:
 ifeq (, $(shell which docker))
