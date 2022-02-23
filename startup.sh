@@ -9,14 +9,14 @@ set -x
 curl -qfsL 'https://raw.githubusercontent.com/digital-land/specification/main/specification/dataset.csv' > specification/dataset.csv
 set -x
 
-collection_s3="https://collection-dataset.s3.eu-west-2.amazonaws.com/"
+collection_s3="https://${COLLECTION_DATASET_BUCKET_NAME}.s3.eu-west-2.amazonaws.com/"
 
 set -x
 curl -qsfL -o digital-land.sqlite3 ${collection_s3}digital-land-builder/dataset/digital-land.sqlite3
 curl -qsfL -o entity.sqlite3 ${collection_s3}entity-builder/dataset/entity.sqlite3
 
 # test database for testing ..
-curl -qsfL -o listed-building-grade.sqlite3 https://collection-dataset.s3.eu-west-2.amazonaws.com/listed-building-collection/dataset/listed-building-grade.sqlite
+curl -qsfL -o listed-building-grade.sqlite3 https://${COLLECTION_DATASET_BUCKET_NAME}.s3.eu-west-2.amazonaws.com/listed-building-collection/dataset/listed-building-grade.sqlite
 set +x
 
 IFS=,
@@ -25,7 +25,7 @@ csvcut -c dataset,collection specification/dataset.csv |
 while read dataset collection
 do
     # current s3 structure has collection, but should be flattend
-    # https://collection-dataset.s3.eu-west-2.amazonaws.com/{COLLECTION}-collection/dataset/{DATASET}/{DATASET}.sqlite3
+    # https://${COLLECTION_DATASET_BUCKET_NAME}.s3.eu-west-2.amazonaws.com/{COLLECTION}-collection/dataset/{DATASET}/{DATASET}.sqlite3
     case "$collection" in
     ""|organisation) continue ;;
     esac

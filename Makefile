@@ -8,7 +8,7 @@ BUILD_TAG_FACT := $(BUILD_REPO)/digital_land_datasette
 all:: build
 
 build: docker-check
-	docker build -t $(BUILD_TAG_FACT) .
+	docker build -t $(BUILD_TAG_FACT) --build-arg collection_dataset=$(COLLECTION_DATASET_BUCKET_NAME) .
 
 login-docker:
 	aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin $(BUILD_REPO)
@@ -17,6 +17,7 @@ push: docker-check login-docker
 	docker push $(BUILD_TAG_FACT)
 	aws ecs update-service --force-new-deployment --service development-datasette-service --cluster development-datasette-cluster
 	aws ecs update-service --force-new-deployment --service staging-datasette-service --cluster staging-datasette-cluster
+	aws ecs update-service --force-new-deployment --service production-datasette-service --cluster production-datasette-cluster
 
 docker-check:
 ifeq (, $(shell which docker))
