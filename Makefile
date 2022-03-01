@@ -17,7 +17,12 @@ endif
 all:: build
 
 build: docker-check
-	docker build -t $(BUILD_TAG_FACT) --build-arg COLLECTION_DATASET_BUCKET_NAME=$(COLLECTION_DATASET_BUCKET_NAME) --build-arg AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) --build-arg AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) --build-arg AWS_DEFAULT_REGION=$(AWS_DEFAULT_REGION) .
+	docker build -t $(BUILD_TAG_FACT) \
+		--build-arg COLLECTION_DATASET_BUCKET_NAME=$(COLLECTION_DATASET_BUCKET_NAME) \
+		--build-arg AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
+		--build-arg AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
+		--build-arg AWS_DEFAULT_REGION=$(AWS_DEFAULT_REGION) \
+		.
 
 login-docker:
 	aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin $(BUILD_REPO)
