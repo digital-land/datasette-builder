@@ -25,7 +25,7 @@ csvcut -c dataset,collection specification/dataset.csv |
 while read dataset collection
 do
     # current s3 structure has collection, but should be flattend
-    # https://${COLLECTION_DATASET_BUCKET_NAME}.s3.eu-west-2.amazonaws.com/{COLLECTION}-collection/dataset/{DATASET}/{DATASET}.sqlite3
+    # s3://${COLLECTION_DATASET_BUCKET_NAME}/{COLLECTION}-collection/dataset/{DATASET}/{DATASET}.sqlite3
     case "$collection" in
     ""|organisation) continue ;;
     esac
@@ -43,5 +43,7 @@ done
 set -x
 date
 set +x
+
+echo "Artifact ingestion complete, starting datasette service"
 
 gunicorn app:app -t 60 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:5000
