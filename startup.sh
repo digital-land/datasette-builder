@@ -9,14 +9,14 @@ set -x
 curl -qfsL 'https://raw.githubusercontent.com/digital-land/specification/main/specification/dataset.csv' > specification/dataset.csv
 set -x
 
-collection_s3="s3://${COLLECTION_DATASET_BUCKET_NAME}/"
+collection_s3="https://${COLLECTION_DATASET_BUCKET_NAME}.s3.eu-west-2.amazonaws.com/"
 
 set -x
-aws s3 cp ${collection_s3}digital-land-builder/dataset/digital-land.sqlite3 digital-land.sqlite3
-aws s3 cp ${collection_s3}entity-builder/dataset/entity.sqlite3 entity.sqlite3
+curl -qsfL -o digital-land.sqlite3 ${collection_s3}digital-land-builder/dataset/digital-land.sqlite3
+curl -qsfL -o entity.sqlite3 ${collection_s3}entity-builder/dataset/entity.sqlite3
 
 # test database for testing ..
-aws s3 cp s3://${COLLECTION_DATASET_BUCKET_NAME}/listed-building-collection/dataset/listed-building-grade.sqlite3 listed-building-grade.sqlite3
+curl -qsfL -o listed-building-grade.sqlite3 https://${COLLECTION_DATASET_BUCKET_NAME}.s3.eu-west-2.amazonaws.com/listed-building-collection/dataset/listed-building-grade.sqlite
 set +x
 
 IFS=,
@@ -25,17 +25,17 @@ csvcut -c dataset,collection specification/dataset.csv |
 while read dataset collection
 do
     # current s3 structure has collection, but should be flattend
-    # s3://${COLLECTION_DATASET_BUCKET_NAME}/{COLLECTION}-collection/dataset/{DATASET}/{DATASET}.sqlite3
+    # https://${COLLECTION_DATASET_BUCKET_NAME}.s3.eu-west-2.amazonaws.com/{COLLECTION}-collection/dataset/{DATASET}/{DATASET}.sqlite3
     case "$collection" in
     ""|organisation) continue ;;
     esac
 
-    uri=$collection_s3$collection-collection/dataset/$dataset.sqlite3
+    url=$collection_s3$collection-collection/dataset/$dataset.sqlite3
     path=$dataset.sqlite3
 
     if [ ! -f $path ] ; then
         set -x
-        aws s3 cp "$uri" $path  || continue
+        curl -qsfL -o $path "$url"  || continue
         set +x
     fi
 done

@@ -4,25 +4,11 @@ include makerules/makerules.mk
 BUILD_REPO := 955696714113.dkr.ecr.eu-west-2.amazonaws.com
 BUILD_TAG_FACT := $(BUILD_REPO)/digital_land_datasette
 
-ifeq ($(AWS_ACCESS_KEY_ID),)
-    $(error AWS_ACCESS_KEY_ID must be defined in the environment)
-endif
-ifeq ($(AWS_SECRET_ACCESS_KEY),)
-    $(error AWS_SECRET_ACCESS_KEY must be defined in the environment)
-endif
-ifeq ($(AWS_DEFAULT_REGION),)
-    $(error AWS_DEFAULT_REGION must be defined in the environment)
-endif
 
 all:: build
 
 build: docker-check
-	docker build -t $(BUILD_TAG_FACT) \
-		--build-arg COLLECTION_DATASET_BUCKET_NAME=$(COLLECTION_DATASET_BUCKET_NAME) \
-		--build-arg AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
-		--build-arg AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
-		--build-arg AWS_DEFAULT_REGION=$(AWS_DEFAULT_REGION) \
-		.
+	docker build -t $(BUILD_TAG_FACT) --build-arg COLLECTION_DATASET_BUCKET_NAME=$(COLLECTION_DATASET_BUCKET_NAME) .
 
 login-docker:
 	aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin $(BUILD_REPO)
