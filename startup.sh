@@ -12,11 +12,11 @@ set -x
 collection_s3="s3://${COLLECTION_DATASET_BUCKET_NAME}/"
 
 set -x
-s3 cp ${collection_s3}digital-land-builder/dataset/digital-land.sqlite3 digital-land.sqlite3
-s3 cp ${collection_s3}entity-builder/dataset/entity.sqlite3 entity.sqlite3
+aws s3 cp ${collection_s3}digital-land-builder/dataset/digital-land.sqlite3 digital-land.sqlite3
+aws s3 cp ${collection_s3}entity-builder/dataset/entity.sqlite3 entity.sqlite3
 
 # test database for testing ..
-s3 cp s3://${COLLECTION_DATASET_BUCKET_NAME}/listed-building-collection/dataset/listed-building-grade.sqlite3 listed-building-grade.sqlite3
+aws s3 cp s3://${COLLECTION_DATASET_BUCKET_NAME}/listed-building-collection/dataset/listed-building-grade.sqlite3 listed-building-grade.sqlite3
 set +x
 
 IFS=,
@@ -35,7 +35,7 @@ do
 
     if [ ! -f $path ] ; then
         set -x
-        s3 cp "$uri" $path  || continue
+        aws s3 cp "$uri" $path  || continue
         set +x
     fi
 done
