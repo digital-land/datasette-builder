@@ -4,3 +4,5 @@ services:
     build: .
     ports:
       - "5000:5000"
+    environment:
+      COLLECTION_DATASET_BUCKET_NAME: "digital-land-production-collection-dataset"
