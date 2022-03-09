@@ -12,10 +12,10 @@ It fetches the digital-land.sqlite3 and entity.sqlite3 databases.
 
 ## Github action
 
-The github action is this repository does not rebuild the docker image, but rather updates the elasticbeanstalk
-enviroment. By update, in this case unless the docker image has changed in the dockerhub (more on that later) we just mean a restart using existing configuration. However it will reload the sqlite databases from the collection bucket thereby ensuring the data is up to date.
+There are two github actions in this repo.
 
-The action runs daily.
+  - [Build](/.github/workflows/build.yml) - builds a new docker image on commit to main and pushes it to ECR repository. This action runs on commit to main.
+  - [Deploy](/.github/workflows/deploy.yml) - just restarts the digital land datasette service. The service reloads all sqlite dbs from s3 on startup (i.e. refreshes data). This action runs daily.
 
 
 ## Build & Deployment
