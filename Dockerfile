@@ -8,10 +8,9 @@ RUN apt-get update && \
 
 ENV SQLITE_EXTENSIONS '/usr/lib/x86_64-linux-gnu/mod_spatialite.so'
 RUN pip install -U datasette
-
+RUN pip install datasette-block-robots
 RUN pip uninstall -y uvicorn
-RUN pip install uvicorn[standard] gunicorn environs
-RUN pip install -e git+https://github.com/digital-land/datasette@allow-bidirectional-joins-echo-sql#egg=datasette
+RUN pip install uvicorn[standard] gunicorn
 RUN pip install csvkit
 
 EXPOSE 5000

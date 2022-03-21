@@ -1,11 +1,11 @@
-name: Build and deploy datasette
+name: Deploy datasette
 on:
   schedule:
   - cron: 0 7 * * *
   workflow_dispatch:
 
 jobs:
-  build:
+  deploy:
 
     runs-on: ubuntu-20.04
 
@@ -25,5 +25,4 @@ jobs:
         aws-region: eu-west-2
     - name: Deploy
       run: |
-        make build
-        make push
+        make deploy
