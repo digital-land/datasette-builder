@@ -19,6 +19,8 @@ curl -qsfL -o entity.sqlite3 ${collection_s3}entity-builder/dataset/entity.sqlit
 curl -qsfL -o listed-building-grade.sqlite3 https://${COLLECTION_DATASET_BUCKET_NAME}.s3.eu-west-2.amazonaws.com/listed-building-collection/dataset/listed-building-grade.sqlite
 set +x
 
+DATASETTE_SERVE_ARGS="-h 0.0.0.0 -p 5000 --immutable=/app/entity.sqlite3 --immutable=/app/digital-land.sqlite3 "
+OLDIFS=$IFS
 IFS=,
 csvcut -c dataset,collection specification/dataset.csv |
     tail -n +2 |
@@ -38,12 +40,17 @@ do
         curl -qsfL -o $path "$url"  || continue
         set +x
     fi
+    DATASETTE_SERVE_ARGS+="--immutable=/app/$dataset.sqlite3 "
 done
+IFS=$OLDIFS
 
 set -x
 date
 set +x
 
+echo -e "Artifacts downloaded:\n$(ls -lh /app/*.sqlite3)"
 echo "Artifact ingestion complete, starting datasette service"
+echo "Running: datasette serve ${DATASETTE_SERVE_ARGS}"
 
-gunicorn app:app -t 60 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:5000
+datasette serve ${DATASETTE_SERVE_ARGS}
+# gunicorn app:app -t 60 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:5000
