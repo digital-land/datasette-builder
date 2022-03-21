@@ -22,8 +22,6 @@ set +x
 DATASETTE_SERVE_ARGS="-h 0.0.0.0 -p 5000 --immutable=/app/entity.sqlite3 --immutable=/app/digital-land.sqlite3 "
 OLDIFS=$IFS
 IFS=,
-csvcut -c dataset,collection specification/dataset.csv |
-    tail -n +2 |
 while read dataset collection
 do
     # current s3 structure has collection, but should be flattend
@@ -41,7 +39,7 @@ do
         set +x
     fi
     DATASETTE_SERVE_ARGS+="--immutable=/app/$dataset.sqlite3 "
-done
+done < <(csvcut -c dataset,collection specification/dataset.csv | tail -n +2)
 IFS=$OLDIFS
 
 set -x
