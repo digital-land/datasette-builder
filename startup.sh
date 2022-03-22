@@ -19,7 +19,7 @@ curl -qsfL -o entity.sqlite3 ${collection_s3}entity-builder/dataset/entity.sqlit
 curl -qsfL -o listed-building-grade.sqlite3 https://${COLLECTION_DATASET_BUCKET_NAME}.s3.eu-west-2.amazonaws.com/listed-building-collection/dataset/listed-building-grade.sqlite
 set +x
 
-DATASETTE_SERVE_ARGS="-h 0.0.0.0 -p 5000 --immutable=/app/entity.sqlite3 --immutable=/app/digital-land.sqlite3 "
+DATASETTE_SERVE_ARGS="-h 0.0.0.0 -p 5000 --setting sql_time_limit_ms 2000 --immutable=/app/entity.sqlite3 --immutable=/app/digital-land.sqlite3 "
 OLDIFS=$IFS
 IFS=,
 while read dataset collection
