@@ -30,6 +30,11 @@ do
     ""|organisation) continue ;;
     esac
 
+    if [ $dataset = "listed-building" ] ; then
+      echo "Skipping $dataset"
+      continue
+    fi
+
     url=$collection_s3$collection-collection/dataset/$dataset.sqlite3
     path=$dataset.sqlite3
 
