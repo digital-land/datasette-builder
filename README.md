@@ -18,22 +18,6 @@ There are two github actions in this repo.
   - [Deploy](/.github/workflows/deploy.yml) - just restarts the digital land datasette service. The service reloads all sqlite dbs from s3 on startup (i.e. refreshes data). This action runs daily.
 
 
-## Build & Deployment
-
-The application is running in Elasticbeanstalk in the digital land AWS dev account.
-
-1. Application name: datasette-aws-entity-v2
-
-2. Environment: Datasetteawsentityv2-env
-
-The docker image is built and pushed to [ECR](https://d955696714113.dkr.ecr.eu-west-2.amazonaws.com/digital_land_datasette)
-
-The build of the image, push to dockerhub and initial Elasticbeanstalk was most likely
-done directly from a developer machine.
-
-The Elascticbeanstalk application uses this run configuration [Dockerrun.aws.json](Dockerrun.aws.json)
-
-
 # Licence
 
 The software in this project is open source and covered by the [LICENSE](LICENSE) file.
