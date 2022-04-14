@@ -33,15 +33,21 @@ do
     url=$collection_s3$collection-collection/dataset/$dataset.sqlite3
     path=$dataset.sqlite3
 
+    if [ ! -f $path ] ; then
+        set -x
+        curl -qsfL -o $path "$url" && DATASETTE_SERVE_ARGS+="--immutable=/app/$dataset.sqlite3 " || continue
+        set +x
+    fi
+
     inspect_file_url=$collection_s3$collection-collection/dataset/$dataset.sqlite3.json
     inspect_file_path=$dataset.sqlite3.json
 
-    if [ ! -f $path ] ; then
+    if [ ! -f $inspect_file_path ] ; then
         set -x
-        curl -qsfL -o $path "$url" && curl -qsfL -o $inspect_file_path "$inspect_file_url"  || continue
+        curl -qsfL -o $inspect_file_path "$inspect_file_url" || continue
         set +x
     fi
-    DATASETTE_SERVE_ARGS+="--immutable=/app/$dataset.sqlite3 "
+
 done < <(csvcut -c dataset,collection specification/dataset.csv | tail -n +2)
 IFS=$OLDIFS
 
