@@ -38,7 +38,7 @@ do
 
     if [ ! -f $path ] ; then
         set -x
-        curl -qsfL -o $path "$url" && curl -qsfL -o inspect_file_path "inspect_file_url"  || continue
+        curl -qsfL -o $path "$url" && curl -qsfL -o $inspect_file_path "$inspect_file_url"  || continue
         set +x
     fi
     DATASETTE_SERVE_ARGS+="--immutable=/app/$dataset.sqlite3 "
