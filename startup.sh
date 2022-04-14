@@ -30,11 +30,6 @@ do
     ""|organisation) continue ;;
     esac
 
-    if [ $dataset = "listed-building" ] ; then
-      echo "Skipping $dataset"
-      continue
-    fi
-
     url=$collection_s3$collection-collection/dataset/$dataset.sqlite3
     path=$dataset.sqlite3
 
@@ -52,8 +47,12 @@ date
 set +x
 
 echo -e "Artifacts downloaded:\n$(ls -lh /app/*.sqlite3)"
-echo "Artifact ingestion complete, starting datasette service"
-echo "Running: datasette serve ${DATASETTE_SERVE_ARGS}"
+echo "Artifact ingestion complete. Generate inspect file for all databases"
+
+./inspect.py /app
+
+DATASETTE_SERVE_ARGS+=" --inspect-file=/app/inspect-data-all.json"
+
+echo "Starting datasette service with args $DATASETTE_SERVE_ARGS"
 
 datasette serve ${DATASETTE_SERVE_ARGS}
-# gunicorn app:app -t 60 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:5000

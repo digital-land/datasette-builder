@@ -15,9 +15,10 @@ RUN pip install csvkit
 
 EXPOSE 5000
 
-ADD app.py .
-ADD settings.json .
-ADD metadata.json .
+COPY app.py .
+COPY settings.json .
+COPY metadata.json .
+COPY inspect.py .
 COPY startup.sh .
 
 ARG COLLECTION_DATASET_BUCKET_NAME
