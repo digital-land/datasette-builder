@@ -58,15 +58,6 @@ set +x
 echo -e "Artifacts downloaded:\n$(ls -lh /app/*.sqlite3)"
 echo "Artifact ingestion complete. Generate inspect file for all databases"
 
-for $file in /app/*.sqlite3; do
-  if [[ ! -f  "$file.json" ]] ; then
-      set -x
-      echo "Couldn't find inspect file for $path. Try to generate one now."
-      datasette inspect $path --inspect-file="$file.json" || continue
-      set +x
-  fi
-end
-
 ./inspect.py /app
 
 DATASETTE_SERVE_ARGS+=" --inspect-file=/app/inspect-data-all.json"
