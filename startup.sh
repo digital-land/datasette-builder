@@ -48,13 +48,6 @@ do
         set +x
     fi
 
-    if [[ ! -f  $inspect_file_path  &&  -f $path ]] ; then
-        set -x
-        echo "Couldn't find inspect file for $path. Try to generate one now."
-        datasette inspect $path --inspect-file=$inspect_file_path || continue
-        set +x
-    fi
-
 done < <(csvcut -c dataset,collection specification/dataset.csv | tail -n +2)
 IFS=$OLDIFS
 
@@ -64,6 +57,15 @@ set +x
 
 echo -e "Artifacts downloaded:\n$(ls -lh /app/*.sqlite3)"
 echo "Artifact ingestion complete. Generate inspect file for all databases"
+
+for $file in /app/*.sqlite3; do
+  if [[ ! -f  "$file.json" ]] ; then
+      set -x
+      echo "Couldn't find inspect file for $path. Try to generate one now."
+      datasette inspect $path --inspect-file="$file.json" || continue
+      set +x
+  fi
+end
 
 ./inspect.py /app
 
