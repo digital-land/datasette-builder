@@ -60,7 +60,7 @@ echo "Artifact ingestion complete. Generate inspect file for all databases"
 
 ./inspect.py /app
 
-DATASETTE_SERVE_ARGS+=" --inspect-file=/app/inspect-data-all.json"
+DATASETTE_SERVE_ARGS+=" --inspect-file=/app/inspect-data-all.json --template-dir=/app/templates/"
 
 echo "Starting datasette service with args $DATASETTE_SERVE_ARGS"
 

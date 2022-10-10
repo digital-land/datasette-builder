@@ -21,6 +21,8 @@ COPY metadata.json .
 COPY inspect.py .
 COPY startup.sh .
 
+ADD templates /app/templates
+
 ARG COLLECTION_DATASET_BUCKET_NAME
 ENV COLLECTION_DATASET_BUCKET_NAME=${COLLECTION_DATASET_BUCKET_NAME}
 
