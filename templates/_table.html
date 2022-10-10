@@ -20,15 +20,14 @@
     </tr>
     </thead>
     <tbody>
-    {% if base_url == "/" %}
-      {% set digital_land_datasette = "https://datasette.digital-land.info" %}
-    {% else %}
-      {% set digital_land_datasette = base_url %}
-    {% endif %}
     {% for row in display_rows %}
     <tr>
       {% for cell in row %}
-      <td class="col-{{ cell.column|to_css_class }} type-{{ cell.value_type }}">{% if cell.column == "resource" %}<a href="{{digital_land_datasette}}/digital-land/resource/{{cell.value}}">{{ cell.value }}</a>{% else %}{{ cell.value }}{% endif %}</td>
+        {% if cell.column == "resource" and database != "digital-land" %}
+          <td class="col-{{ cell.column|to_css_class }} type-{{ cell.value_type }}"><a href="/digital-land/resource/{{cell.value}}">{{ cell.value }}</a></td>
+        {% else %}
+          <td class="col-{{ cell.column|to_css_class }} type-{{ cell.value_type }}">{{ cell.value }}</td>
+        {% endif %}
       {% endfor %}
     </tr>
     {% endfor %}
