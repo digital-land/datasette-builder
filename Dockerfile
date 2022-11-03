@@ -14,6 +14,7 @@ RUN pip install uvicorn[standard] gunicorn
 RUN pip install csvkit
 
 EXPOSE 5000
+ENV PORT=5000
 
 COPY app.py .
 COPY settings.json .
@@ -23,7 +24,4 @@ COPY startup.sh .
 
 ADD templates /app/templates
 
-ARG COLLECTION_DATASET_BUCKET_NAME
-ENV COLLECTION_DATASET_BUCKET_NAME=${COLLECTION_DATASET_BUCKET_NAME}
-
-ENTRYPOINT ["./startup.sh"]
+ENTRYPOINT ["bash", "startup.sh"]
