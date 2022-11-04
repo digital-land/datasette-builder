@@ -1,5 +1,10 @@
+name: Deploy to ECS
+
 on:
   push:
+    branches:
+      - feat/new-infrastructure
+  pull_request:
     branches:
       - feat/new-infrastructure
 
