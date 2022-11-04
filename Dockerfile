@@ -16,10 +16,6 @@ RUN pip install csvkit
 EXPOSE 5000
 ENV PORT=5000
 
-COPY app.py .
-COPY settings.json .
-COPY metadata.json .
-COPY inspect.py .
 COPY startup.sh .
 
 ADD templates /app/templates

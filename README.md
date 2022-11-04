@@ -1,25 +1,42 @@
 # Datasette Builder
 
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/digital-land/datasette-builder/blob/master/LICENSE)
-[![Build and deploy datasette](https://github.com/digital-land/datasette-builder/actions/workflows/deploy.yml/badge.svg)](https://github.com/digital-land/datasette-builder/actions/workflows/deploy.yml)
+[![deploy datasette](https://github.com/digital-land/datasette-builder/actions/workflows/deploy.yml/badge.svg)](https://github.com/digital-land/datasette-builder/actions/workflows/deploy.yml)
 
-This repository contains files to build/run a docker image that will collect digital-land database files and serve them using Datasette.
+This repository contains files to build a docker image that will leverage EFS to access digital-land database files and 
+serve them using Datasette.
 
-The sqlite databases are collected from the digital-land-collection S3 bukcet
-in the AWS digital land dev account on startup.
+The sqlite databases are automatically synced to EFS from the collection S3 bucket for the environment. For this reason
+the application cannot be run locally.
 
-It fetches the digital-land.sqlite3 and entity.sqlite3 databases.
+# Usage
 
-## Github action
+## Deploy changes
 
-There are two github actions in this repo.
+To deploy changes, just add and commit any changes and push to GitHub. Any deployments requiring approval can be found 
+[here](https://github.com/digital-land/datasette-builder/actions).
 
-  - [Build](/.github/workflows/build.yml) - builds a new docker image on commit to main and pushes it to ECR repository. This action runs on commit to main.
-  - [Deploy](/.github/workflows/deploy.yml) - just restarts the digital land datasette service. The service reloads all sqlite dbs from s3 on startup (i.e. refreshes data). This action runs daily.
+## Test changes locally
 
+To test changes locally you will need the following requirements:
+
+* docker
+* docker-compose
+* jq
+* aws cli
+
+You will also need AWS credentials in your environment, the preference is to use 
+[aws-vault](https://github.com/99designs/aws-vault) for this.
+
+You will also need the name of an S3 bucket that has the required sqlite files.
+
+`aws-vault exec dl-prod -- make start BUCKET=<environment>-collection-data`
 
 # Licence
 
 The software in this project is open source and covered by the [LICENSE](LICENSE) file.
 
-Individual datasets copied into this repository may have specific copyright and licensing, otherwise all content and data in this repository is [© Crown copyright](http://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/copyright-and-re-use/crown-copyright/) and available under the terms of the [Open Government 3.0](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/) licence.
+Individual datasets copied into this repository may have specific copyright and licensing, otherwise all content and 
+data in this repository is [© Crown copyright](http://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/copyright-and-re-use/crown-copyright/) 
+and available under the terms of the [Open Government 3.0](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/) 
+licence.
