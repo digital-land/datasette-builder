@@ -8,6 +8,8 @@ start_datasette() {
     DATASETTE_SERVE_ARGS+="--immutable=/mnt/datasets/$KEY.sqlite3 "
   done
 
+  echo "Found datasets for datasette $(jq -c 'keys | flatten' /mnt/datasets/inspect-data-all.json)"
+
   DATASETTE_SERVE_ARGS+=" --inspect-file=/mnt/datasets/inspect-data-all.json --template-dir=/app/templates/"
   echo "Starting datasette service with args $DATASETTE_SERVE_ARGS"
   if [[ "$DATASETTE_PID" -ne "0" ]]; then kill $DATASETTE_PID; fi
