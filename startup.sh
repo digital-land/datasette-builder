@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
-DATASETTE_SERVE_ARGS="-h 0.0.0.0 -p $PORT --setting sql_time_limit_ms 5000 --nolock "
 DATASETTE_PID=0
 
 start_datasette() {
+  DATASETTE_SERVE_ARGS="-h 0.0.0.0 -p $PORT --setting sql_time_limit_ms 5000 --nolock "
+
   for KEY in $(jq -rc 'keys[]' /mnt/datasets/inspect-data-all.json); do
     DATASETTE_SERVE_ARGS+="--immutable=/mnt/datasets/$KEY.sqlite3 "
   done
