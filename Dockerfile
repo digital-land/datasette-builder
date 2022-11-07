@@ -3,7 +3,7 @@ RUN mkdir -p app
 WORKDIR /app
 
 RUN apt-get update && \
-    apt-get install -y python3-dev gcc libsqlite3-mod-spatialite && \
+    apt-get install -y python3-dev gcc libsqlite3-mod-spatialite jq && \
     rm -rf /var/lib/apt/lists/*
 
 ENV SQLITE_EXTENSIONS '/usr/lib/x86_64-linux-gnu/mod_spatialite.so'
