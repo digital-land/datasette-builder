@@ -1,12 +1,17 @@
 name: Deploy
 
 on:
-  push:
-    branches:
-      - feat/new-infrastructure
-  pull_request:
-    branches:
-      - feat/new-infrastructure
+#  push:
+#    branches:
+#      - feat/new-infrastructure
+#  pull_request:
+#    branches:
+#      - feat/new-infrastructure
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: environment
+        description: The environment to deploy to.
 
 jobs:
   detect-environments:
@@ -28,8 +33,9 @@ jobs:
     needs: [detect-environments]
     strategy:
       matrix:
-        environment: ${{ fromJSON(needs.detect-environments.outputs.environments) }}
+        environment: ${{ fromJSON((inputs.environment && ["inputs.environment"]) || needs.detect-environments.outputs.environments) }}
     environment: ${{ matrix.environment }}
+
     env:
       DOCKER_REPO: ${{ secrets.DEPLOY_DOCKER_REPOSITORY }}
     steps:
