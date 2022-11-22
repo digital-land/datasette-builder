@@ -13,7 +13,10 @@ start_datasette() {
 
   DATASETTE_SERVE_ARGS+=" --inspect-file=/mnt/datasets/inspect-data-all.json --template-dir=/app/templates/"
   echo "Starting datasette service with args $DATASETTE_SERVE_ARGS"
-  if [[ "$DATASETTE_PID" -ne "0" ]]; then kill $DATASETTE_PID; fi
+  if [[ "$DATASETTE_PID" -ne "0" ]]; then
+    kill $DATASETTE_PID
+    sleep 5 # Wait for the service to stop
+  fi
   datasette serve ${DATASETTE_SERVE_ARGS} & DATASETTE_PID=$! || exit 1
   echo "Datasette started with PID $DATASETTE_PID"
 }
