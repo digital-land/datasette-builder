@@ -1,67 +1,36 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-set -x
-date
-set +x
+DATASETTE_PID=0
 
-mkdir -p specification
-set -x
-curl -qfsL 'https://raw.githubusercontent.com/digital-land/specification/main/specification/dataset.csv' > specification/dataset.csv
-set -x
+start_datasette() {
+  DATASETTE_SERVE_ARGS="-h 0.0.0.0 -p $PORT --setting sql_time_limit_ms 5000 --nolock --immutable=/mnt/datasets/entity.sqlite3 --immutable=/mnt/datasets/digital-land.sqlite3 "
 
-collection_s3="https://${COLLECTION_DATASET_BUCKET_NAME}.s3.eu-west-2.amazonaws.com/"
+  for KEY in $(jq -rc 'keys[]' /mnt/datasets/inspect-data-all.json); do
+    DATASETTE_SERVE_ARGS+="--immutable=/mnt/datasets/$KEY.sqlite3 "
+  done
 
-set -x
-curl -qsfL -o digital-land.sqlite3 ${collection_s3}digital-land-builder/dataset/digital-land.sqlite3
-curl -qsfL -o entity.sqlite3 ${collection_s3}entity-builder/dataset/entity.sqlite3
+  echo "Found datasets for datasette $(jq -c 'keys | flatten' /mnt/datasets/inspect-data-all.json)"
 
-# test database for testing ..
-curl -qsfL -o listed-building-grade.sqlite3 https://${COLLECTION_DATASET_BUCKET_NAME}.s3.eu-west-2.amazonaws.com/listed-building-collection/dataset/listed-building-grade.sqlite
-set +x
+  DATASETTE_SERVE_ARGS+=" --inspect-file=/mnt/datasets/inspect-data-all.json --template-dir=/app/templates/"
+  echo "Starting datasette service with args $DATASETTE_SERVE_ARGS"
+  if [[ "$DATASETTE_PID" -ne "0" ]]; then
+    kill $DATASETTE_PID
+    sleep 5 # Wait for the service to stop
+  fi
+  datasette serve ${DATASETTE_SERVE_ARGS} & DATASETTE_PID=$! || exit 1
+  echo "Datasette started with PID $DATASETTE_PID"
+}
 
-DATASETTE_SERVE_ARGS="-h 0.0.0.0 -p 5000 --setting sql_time_limit_ms 5000 --immutable=/app/entity.sqlite3 --immutable=/app/digital-land.sqlite3 "
-OLDIFS=$IFS
-IFS=,
-while read dataset collection
-do
-    # current s3 structure has collection, but should be flattend
-    # https://${COLLECTION_DATASET_BUCKET_NAME}.s3.eu-west-2.amazonaws.com/{COLLECTION}-collection/dataset/{DATASET}/{DATASET}.sqlite3
-    case "$collection" in
-    ""|organisation) continue ;;
-    esac
+start_datasette
+CURRENT_CHECKSUM=$(sha256sum /mnt/datasets/inspect-data-all.json)
 
-    url=$collection_s3$collection-collection/dataset/$dataset.sqlite3
-    path=$dataset.sqlite3
-
-    if [ ! -f $path ] ; then
-        set -x
-        curl -qsfL -o $path "$url" && DATASETTE_SERVE_ARGS+="--immutable=/app/$dataset.sqlite3 " || continue
-        set +x
-    fi
-
-    inspect_file_url=$collection_s3$collection-collection/dataset/$dataset.sqlite3.json
-    inspect_file_path=$dataset.sqlite3.json
-
-    if [ ! -f $inspect_file_path ] ; then
-        set -x
-        curl -qsfL -o $inspect_file_path "$inspect_file_url" || continue
-        set +x
-    fi
-
-done < <(csvcut -c dataset,collection specification/dataset.csv | tail -n +2)
-IFS=$OLDIFS
-
-set -x
-date
-set +x
-
-echo -e "Artifacts downloaded:\n$(ls -lh /app/*.sqlite3)"
-echo "Artifact ingestion complete. Generate inspect file for all databases"
-
-./inspect.py /app
-
-DATASETTE_SERVE_ARGS+=" --inspect-file=/app/inspect-data-all.json --template-dir=/app/templates/"
-
-echo "Starting datasette service with args $DATASETTE_SERVE_ARGS"
-
-datasette serve ${DATASETTE_SERVE_ARGS}
+while [[ 1=1 ]]; do
+  if echo "$CURRENT_CHECKSUM" | sha256sum --check --status; then
+    true
+  else
+    echo "/mnt/datasets/inspect-data-all.json has changed, restarting datasette"
+    CURRENT_CHECKSUM=$(sha256sum /mnt/datasets/inspect-data-all.json)
+    start_datasette
+  fi
+  sleep 10
+done

@@ -17,6 +17,7 @@ tmp/
 
 # ignore intermediate files
 var/
+files/
 
 # ignore updated specification files
 specification/
@@ -27,3 +28,6 @@ view_model.db
 *.sqlite3
 .idea
 *.xml
+
+# ignore act secrets
+.secrets
