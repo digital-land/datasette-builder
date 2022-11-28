@@ -22,15 +22,15 @@ start_datasette() {
 }
 
 start_datasette
-CURRENT_CHECKSUM=$(sha256sum /mnt/datasets/inspect-data-all.json)
+CURRENT_CHECKSUM="$(echo "$(cat /mnt/datasets/inspect-data-all.json)--$(ls -al /mnt/datasets/inspect-data-all.json)" | sha256sum)"
 
 while [[ 1=1 ]]; do
   if echo "$CURRENT_CHECKSUM" | sha256sum --check --status; then
     true
   else
     echo "/mnt/datasets/inspect-data-all.json has changed, restarting datasette"
-    CURRENT_CHECKSUM=$(sha256sum /mnt/datasets/inspect-data-all.json)
+    CURRENT_CHECKSUM="$(echo "$(cat /mnt/datasets/inspect-data-all.json)--$(ls -al /mnt/datasets/inspect-data-all.json)" | sha256sum)"
     start_datasette
   fi
-  sleep 10
+  sleep 2
 done
