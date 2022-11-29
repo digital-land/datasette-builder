@@ -21,15 +21,20 @@ start_datasette() {
   echo "Datasette started with PID $DATASETTE_PID"
 }
 
+get_inspection_hash() {
+  echo "$(cat /mnt/datasets/inspect-data-all.json)--$(ls -al /mnt/datasets/inspect-data-all.json)" | sha256sum
+}
+
 start_datasette
-CURRENT_CHECKSUM="$(echo "$(cat /mnt/datasets/inspect-data-all.json)--$(ls -al /mnt/datasets/inspect-data-all.json)" | sha256sum)"
+
+CURRENT_CHECKSUM=$(get_inspection_hash)
 
 while [[ 1=1 ]]; do
-  if echo "$CURRENT_CHECKSUM" | sha256sum --check --status; then
+  if [ "$CURRENT_CHECKSUM" == "$(get_inspection_hash)" ]; then
     true
   else
     echo "/mnt/datasets/inspect-data-all.json has changed, restarting datasette"
-    CURRENT_CHECKSUM="$(echo "$(cat /mnt/datasets/inspect-data-all.json)--$(ls -al /mnt/datasets/inspect-data-all.json)" | sha256sum)"
+    CURRENT_CHECKSUM=$(get_inspection_hash)
     start_datasette
   fi
   sleep 2
