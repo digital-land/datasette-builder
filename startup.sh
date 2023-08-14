@@ -31,6 +31,7 @@ CURRENT_CHECKSUM=$(get_inspection_hash)
 
 while [[ 1=1 ]]; do
   if [ "$CURRENT_CHECKSUM" == "$(get_inspection_hash)" ]; then
+    echo "checksums match"
     true
   else
     echo "/mnt/datasets/inspect-data-all.json has changed, restarting datasette"
