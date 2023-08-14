@@ -18,6 +18,8 @@ start_datasette() {
     sleep 5 # Wait for the service to stop
   fi
   datasette serve ${DATASETTE_SERVE_ARGS} & DATASETTE_PID=$! || exit 1
+  sleep 5 # Wait for the service to start
+  echo "waiting"
   echo "Datasette started with PID $DATASETTE_PID"
 }
 
