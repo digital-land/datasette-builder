@@ -3,10 +3,10 @@
 DATASETTE_PID=0
 
 start_datasette() {
-  DATASETTE_SERVE_ARGS="-h 0.0.0.0 -p $PORT --setting sql_time_limit_ms 10000 --nolock --immutable=/mnt/datasets/entity.sqlite3 --immutable=/mnt/datasets/digital-land.sqlite3 "
+  DATASETTE_SERVE_ARGS="-h 0.0.0.0 -p $PORT --setting sql_time_limit_ms 10000 --nolock --immutable=/mnt/datasets/digital-land.sqlite3 "
 
   for KEY in $(jq -rc 'keys[]' /mnt/datasets/inspect-data-all.json); do
-    DATASETTE_SERVE_ARGS+="--immutable=/mnt/datasets/$KEY.sqlite3 "
+    DATASETTE_SERVE_ARGS+="--immutable=/mnt/datasets/$KEY.sqlite3 ";
   done
 
   echo "Found datasets for datasette $(jq -c 'keys | flatten' /mnt/datasets/inspect-data-all.json)"
