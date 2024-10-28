@@ -40,3 +40,16 @@ Individual datasets copied into this repository may have specific copyright and 
 data in this repository is [© Crown copyright](http://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/copyright-and-re-use/crown-copyright/) 
 and available under the terms of the [Open Government 3.0](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/) 
 licence.
+
+
+# Using Datasette-parquet plugin
+
+This sets up Datasette instance that serves data directly from Parquet files using a custom plugin, Datasette-Digital-Land.
+
+Use Docker Compose to build the application:
+docker-compose up -d --no-deps --build
+
+To run the application locally, either call 
+./startup.sh 
+or
+datasette serve --metadata metadata.json --port 8001 --host 127.0.0.1

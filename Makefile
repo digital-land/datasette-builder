@@ -1,6 +1,11 @@
 .PHONY: init start clean
 
-init: ./files
+init::
+	pip install --upgrade pip
+ifneq (,$(wildcard requirements.txt))
+	pip3 install --upgrade -r requirements.txt
+endif 
+
 
 ./files:
 	@bash download-files.sh $$BUCKET

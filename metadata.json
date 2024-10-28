@@ -1,0 +1,21 @@
+{
+  "title": "S3 Parquet Files",
+  "description": "Datasette instance for querying Parquet files from an S3 bucket",
+  "settings": {  
+    "suggest_facets": false
+  },
+  "plugins": {
+    "datasette-parquet": {
+      "s3_issues": {
+        "bucket": "local-collection-data",
+        "region": "us-east-1",
+        "endpoint_url": "http://localhost:4566",
+        "access_key": "dummyaccess",
+        "secret_key": "dummysecret",
+        "file": "s3://local-collection-data/issues_latest.parquet",
+        "httpfs": true
+      }
+    }
+  }
+}
+
