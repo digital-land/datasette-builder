@@ -46,10 +46,16 @@ licence.
 
 This sets up Datasette instance that serves data directly from Parquet files using a custom plugin, Datasette-Digital-Land.
 
+First, install datasette-digital-land which will allow you use parquet files on datasette:
+
+    make init
+
 Use Docker Compose to build the application:
-docker-compose up -d --no-deps --build
+    
+    docker-compose up -d --no-deps --build
 
 To run the application locally, either call 
-./startup.sh 
+    
+    ./startup.sh 
 or
-datasette serve --metadata metadata.json --port 8001 --host 127.0.0.1
+    datasette serve --metadata metadata.json --port 8001 --host 127.0.0.1
