@@ -4,7 +4,7 @@
 source .venv/bin/activate
 
 # Perform environment variable substitution for metadata.json if deployed
-if [[ -z "$ENVIRONMENT" ]]; then
+if [[ ! -z "$ENVIRONMENT" ]]; then
   envsubst < metadata_template.json > metadata.json
 fi
 
