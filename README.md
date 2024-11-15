@@ -59,3 +59,9 @@ To run the application locally, either call
     ./startup.sh 
 or
     datasette serve --metadata metadata.json --port 8001 --host 127.0.0.1
+
+
+# TODO
+
+- add different environments for metadata.json
+- serve old data in addition to parquet data (i think this is as simple as modifying the existing datasette serve command)

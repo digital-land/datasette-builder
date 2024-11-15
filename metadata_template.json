@@ -1,0 +1,30 @@
+{
+  "title": "S3 Parquet Files",
+  "description": "Datasette instance for querying Parquet files from an S3 bucket",
+  "settings": {  
+    "suggest_facets": false
+  },
+  "plugins": {
+    "digital-land-datasette": {
+      "issue": {
+        "bucket": "$BUCKET_NAME",
+        "region": "$REGION",
+        "endpoint_url": "$ENDPOINT_URL",
+        "access_key": "$AWS_ACCESS_KEY",
+        "secret_key": "$AWS_SECRET_KEY",
+        "directory": "s3://$BUCKET_NAME/$ISSUE_DIR",
+        "httpfs": true
+      },
+      "expectation": {
+        "bucket": "$BUCKET_NAME",
+        "region": "$REGION",
+        "endpoint_url": "$ENDPOINT_URL",
+        "access_key": "$AWS_ACCESS_KEY",
+        "secret_key": "$AWS_SECRET_KEY",
+        "directory": "s3://$BUCKET_NAME/$EXPECTATION_DIR",
+        "httpfs": true
+      }
+    }
+  }
+}
+

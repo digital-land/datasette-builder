@@ -6,13 +6,22 @@
   },
   "plugins": {
     "digital-land-datasette": {
-      "s3_issues": {
+      "issue": {
         "bucket": "local-collection-data",
         "region": "us-east-1",
         "endpoint_url": "http://localhost:4566",
         "access_key": "dummyaccess",
         "secret_key": "dummysecret",
-        "directory": "s3://local-collection-data/issues",
+        "directory": "s3://local-collection-data/data/issue",
+        "httpfs": true
+      },
+      "expectation": {
+        "bucket": "local-collection-data",
+        "region": "us-east-1",
+        "endpoint_url": "http://localhost:4566",
+        "access_key": "dummyaccess",
+        "secret_key": "dummysecret",
+        "directory": "s3://local-collection-data/data/expectation",
         "httpfs": true
       }
     }
