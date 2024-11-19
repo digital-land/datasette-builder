@@ -9,4 +9,4 @@ if [[ ! -z "$ENVIRONMENT" ]]; then
 fi
 
 # Run the application (replace with the actual command)
-exec datasette serve --metadata metadata.json --port 8001 --host 127.0.0.1
+exec datasette serve --metadata metadata.json -h 0.0.0.0 -p $PORT
