@@ -12,7 +12,9 @@ RUN pip install datasette-block-robots
 RUN pip uninstall -y uvicorn
 RUN pip install uvicorn[standard] gunicorn
 RUN pip install csvkit
-RUN make init
+
+COPY requirements.txt .
+RUN pip3 install --upgrade -r requirements.txt
 
 EXPOSE 5000
 ENV PORT=5000
