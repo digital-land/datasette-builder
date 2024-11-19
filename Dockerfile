@@ -17,6 +17,7 @@ EXPOSE 5000
 ENV PORT=5000
 
 COPY startup.sh .
+COPY metadata_template.json .
 
 ADD templates /app/templates
 
