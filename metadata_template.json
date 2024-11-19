@@ -8,20 +8,14 @@
     "digital-land-datasette": {
       "issue": {
         "bucket": "$BUCKET_NAME",
-        "region": "$REGION",
         "endpoint_url": "$ENDPOINT_URL",
-        "access_key": "$AWS_ACCESS_KEY",
-        "secret_key": "$AWS_SECRET_KEY",
-        "directory": "s3://$BUCKET_NAME/$ISSUE_DIR",
+        "directory": "s3://$BUCKET_NAME/log/issue",
         "httpfs": true
       },
       "expectation": {
         "bucket": "$BUCKET_NAME",
-        "region": "$REGION",
         "endpoint_url": "$ENDPOINT_URL",
-        "access_key": "$AWS_ACCESS_KEY",
-        "secret_key": "$AWS_SECRET_KEY",
-        "directory": "s3://$BUCKET_NAME/$EXPECTATION_DIR",
+        "directory": "s3://$BUCKET_NAME/log/expectation",
         "httpfs": true
       }
     }
