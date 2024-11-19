@@ -7,15 +7,15 @@
   "plugins": {
     "digital-land-datasette": {
       "issue": {
-        "bucket": "$BUCKET_NAME",
-        "endpoint_url": "$ENDPOINT_URL",
-        "directory": "s3://$BUCKET_NAME/log/issue",
+        "bucket": "$COLLECTION_DATA_BUCKET",
+        "endpoint_url": "$COLLECTION_DATA_URL",
+        "directory": "s3://$COLLECTION_DATA_BUCKET/log/issue",
         "httpfs": true
       },
       "expectation": {
-        "bucket": "$BUCKET_NAME",
-        "endpoint_url": "$ENDPOINT_URL",
-        "directory": "s3://$BUCKET_NAME/log/expectation",
+        "bucket": "$COLLECTION_DATA_BUCKET",
+        "endpoint_url": "$COLLECTION_DATA_URL",
+        "directory": "s3://$COLLECTION_DATA_BUCKET/log/expectation",
         "httpfs": true
       }
     }
