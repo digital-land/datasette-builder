@@ -3,6 +3,7 @@ RUN mkdir -p app
 WORKDIR /app
 
 RUN apt-get update && \
+    apt-get install -y gettext && \
     apt-get install -y python3-dev gcc libsqlite3-mod-spatialite jq && \
     rm -rf /var/lib/apt/lists/*
 
