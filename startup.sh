@@ -35,6 +35,7 @@ get_inspection_hash() {
 }
 
 start_datasette
+echo "initial start_datasette ran"
 
 CURRENT_CHECKSUM=$(get_inspection_hash)
 
