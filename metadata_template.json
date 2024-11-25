@@ -3,14 +3,6 @@
   "description": "Datasette instance for querying sqlite and parquet files produced from our pipeline",
   "settings": {  
     "suggest_facets": false
-  },
-  "plugins": {
-    "digital-land-datasette": {
-      "log": {
-        "directory": "s3://$COLLECTION_DATA_BUCKET/log/",
-        "httpfs": true
-      }
-    }
   }
 }
 
