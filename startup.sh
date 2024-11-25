@@ -27,7 +27,7 @@ start_datasette() {
     kill $DATASETTE_PID
     sleep 5 # Wait for the service to stop
   fi
-  datasette serve --debug ${DATASETTE_SERVE_ARGS} & DATASETTE_PID=$! || exit 1
+  datasette serve ${DATASETTE_SERVE_ARGS} & DATASETTE_PID=$! || exit 1
   echo "Datasette started with PID $DATASETTE_PID"
 }
 
