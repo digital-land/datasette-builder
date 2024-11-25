@@ -28,9 +28,19 @@ To test changes locally you will need the following requirements:
 You will also need AWS credentials in your environment, the preference is to use 
 [aws-vault](https://github.com/99designs/aws-vault) for this.
 
+You can either provide the collection data bucket which contains all the files or leave it blank to download a sample set of files. the sample set is downloaded using our cdn and
+is suitable for most purposes use the bucket if you want to get everrything.
+
+### With bucket and AWS Access
 You will also need the name of an S3 bucket that has the required sqlite files.
 
 `aws-vault exec dl-prod -- make start BUCKET=<environment>-collection-data`
+
+### Without Bucket
+
+`make start`
+
+This will download a sample set of files.
 
 # Licence
 

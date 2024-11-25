@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+echo $COLLECTION_DATA_BUCKET
+# Perform environment variable substitution for metadata.json if deployed
+if [[ ! -z "$COLLECTION_DATA_BUCKET" ]]; then
+  envsubst < metadata_template.json > metadata.json
+  echo "COLLECTION_DATA_BUCKET set so metadata.json created"
+else
+  echo "COLLECTION_DATA_BUCKET not set so metadata.json not created"
+fi
+
 DATASETTE_PID=0
 
 start_datasette() {
@@ -26,6 +35,7 @@ get_inspection_hash() {
 }
 
 start_datasette
+echo "initial start_datasette ran"
 
 CURRENT_CHECKSUM=$(get_inspection_hash)
 

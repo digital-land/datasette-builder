@@ -1,8 +1,53 @@
-version: "3.9"
+version: "3.8"
+
 services:
+  localstack:
+    image: localstack/localstack:3.8
+    container_name: "localstack"
+    ports:
+      - "127.0.0.1:4566:4566"
+      - "127.0.0.1:4510-4559:4510-4559"
+    environment:
+      DEBUG: ${DEBUG:-0}
+      AWS_DEFAULT_REGION: eu-west-2
+      SERVICES: s3
+    networks:
+      ls:
+        # Set the container IP address in the 10.0.2.0/24 subnet
+        ipv4_address: 10.0.2.20
+    volumes:
+      # Optional, uncomment if you need persistence or bootstrap scripts
+      - "${LOCALSTACK_VOLUME_DIR:-./localstack/volume}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./localstack/bootstrap:/etc/localstack/init/ready.d/"
+    
   datasette:
     build: .
     ports:
       - "5000:5000"
+    environment:
+      COLLECTION_DATA_BUCKET: local-collection-data
+      AWS_ACCESS_KEY_ID: dummyaccess
+      AWS_SECRET_ACCESS_KEY: dummysecret
+      AWS_DEFAULT_REGION: eu-west-2
+      AWS_ENDPOINT_URL: http://localstack:4566
+      DUCKDB_S3_ENDPOINT: s3.localhost.localstack.cloud:4566
+      DUCKDB_S3_USE_SSL: false
+    dns:
+      # Set the DNS server to be the LocalStack container
+      - 10.0.2.20
+    networks:
+      - ls
     volumes:
       - ./files:/mnt/datasets
+    depends_on:
+      - localstack
+
+networks:
+  # localstack network is used so that requests to localstack resolve from containers
+  # See https://docs.localstack.cloud/references/network-troubleshooting/endpoint-url/
+  ls:
+    ipam:
+      config:
+        # Specify the subnet range for IP address allocation
+        - subnet: 10.0.2.0/24
