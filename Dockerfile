@@ -14,7 +14,7 @@ RUN pip install uvicorn[standard] gunicorn
 RUN pip install csvkit
 
 COPY requirements.txt .
-RUN pip3 install --upgrade -r requirements.txt
+RUN pip install --upgrade -r requirements.txt
 
 EXPOSE 5000
 ENV PORT=5000

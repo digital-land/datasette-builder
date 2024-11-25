@@ -26,7 +26,7 @@ services:
     ports:
       - "5000:5000"
     environment:
-      ENVIRONMENT: local
+      COLLECTION_DATA_BUCKET: local-collection-data
       AWS_ACCESS_KEY_ID: dummyaccess
       AWS_SECRET_ACCESS_KEY: dummysecret
       AWS_DEFAULT_REGION: eu-west-2
