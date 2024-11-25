@@ -5,6 +5,7 @@ echo $COLLECTION_DATA_BUCKET
 if [[ ! -z "$COLLECTION_DATA_BUCKET" ]]; then
   envsubst < metadata_template.json > metadata.json
   echo "COLLECTION_DATA_BUCKET set so metadata.json created"
+  jq . metadata.json
 else
   echo "COLLECTION_DATA_BUCKET not set so metadata.json not created"
 fi
@@ -12,7 +13,7 @@ fi
 DATASETTE_PID=0
 
 start_datasette() {
-  DATASETTE_SERVE_ARGS="-h 0.0.0.0 -p $PORT --setting sql_time_limit_ms 10000 --nolock --cors --immutable=/mnt/datasets/digital-land.sqlite3 --immutable=/mnt/datasets/performance.sqlite3 "
+  DATASETTE_SERVE_ARGS="-h 0.0.0.0 -p $PORT --setting sql_time_limit_ms 10000 --nolock --cors --immutable=/mnt/datasets/digital-land.sqlite3 --immutable=/mnt/datasets/performance.sqlite3 --metadata metadata.json "
 
   for KEY in $(jq -rc 'keys[]' /mnt/datasets/inspect-data-all.json); do
     DATASETTE_SERVE_ARGS+="--immutable=/mnt/datasets/$KEY.sqlite3 ";
@@ -26,7 +27,7 @@ start_datasette() {
     kill $DATASETTE_PID
     sleep 5 # Wait for the service to stop
   fi
-  datasette serve ${DATASETTE_SERVE_ARGS} & DATASETTE_PID=$! || exit 1
+  datasette serve --debug ${DATASETTE_SERVE_ARGS} & DATASETTE_PID=$! || exit 1
   echo "Datasette started with PID $DATASETTE_PID"
 }
 
