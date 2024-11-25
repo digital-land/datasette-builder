@@ -1,1 +1,1 @@
--e git+https://github.com/digital-land/digital-land-datasette.git@datasette_parquet_spike#egg=digital-land-datasette
+-e git+https://github.com/digital-land/digital-land-datasette.git@datasette_parquet_spike#egg=digital_land_datasette

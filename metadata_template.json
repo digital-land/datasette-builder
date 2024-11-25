@@ -1,21 +1,13 @@
 {
-  "title": "S3 Parquet Files",
-  "description": "Datasette instance for querying Parquet files from an S3 bucket",
+  "title": "Planning Data",
+  "description": "Datasette instance for querying sqlite and parquet files produced from our pipeline",
   "settings": {  
     "suggest_facets": false
   },
   "plugins": {
     "digital-land-datasette": {
-      "issue": {
-        "bucket": "$COLLECTION_DATA_BUCKET",
-        "endpoint_url": "$COLLECTION_DATA_URL",
-        "directory": "s3://$COLLECTION_DATA_BUCKET/log/issue",
-        "httpfs": true
-      },
-      "expectation": {
-        "bucket": "$COLLECTION_DATA_BUCKET",
-        "endpoint_url": "$COLLECTION_DATA_URL",
-        "directory": "s3://$COLLECTION_DATA_BUCKET/log/expectation",
+      "log": {
+        "directory": "s3://$COLLECTION_DATA_BUCKET/log/",
         "httpfs": true
       }
     }

@@ -8,10 +8,22 @@ endif
 
 
 ./files:
-	@bash download-files.sh $$BUCKET
+	@bash bin/download-files.sh $$BUCKET
 
-start: ./files
-	docker-compose up
+./localstack/bootstrap/local-collection-data:
+	@bash  bin/download-s3-files.sh $$BUCKET
 
+start: ./files ./localstack/bootstrap/local-collection-data
+	docker-compose up -d
+
+start-no-cache:
+	docker-compose up -d --no-cache
+
+restart:
+	docker-compose restart datasette
+
+stop:
+	docker-compose down --rmi local
+	
 clean:
 	@rm -rf ./files

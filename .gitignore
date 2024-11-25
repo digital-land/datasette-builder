@@ -31,3 +31,7 @@ view_model.db
 
 # ignore act secrets
 .secrets
+
+# ignore loalstack volume and the data that's downloaded
+localstack/volume/
+localstack/bootstrap/local-collection-data/

@@ -28,9 +28,19 @@ To test changes locally you will need the following requirements:
 You will also need AWS credentials in your environment, the preference is to use 
 [aws-vault](https://github.com/99designs/aws-vault) for this.
 
+You can either provide the collection data bucket which contains all the files or leave it blank to download a sample set of files. the sample set is downloaded using our cdn and
+is suitable for most purposes use the bucket if you want to get everrything.
+
+### With bucket and AWS Access
 You will also need the name of an S3 bucket that has the required sqlite files.
 
 `aws-vault exec dl-prod -- make start BUCKET=<environment>-collection-data`
+
+### Without Bucket
+
+`make start`
+
+This will download a sample set of files.
 
 # Licence
 
@@ -40,28 +50,3 @@ Individual datasets copied into this repository may have specific copyright and 
 data in this repository is [© Crown copyright](http://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/copyright-and-re-use/crown-copyright/) 
 and available under the terms of the [Open Government 3.0](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/) 
 licence.
-
-
-# Using Datasette-parquet plugin
-
-This sets up Datasette instance that serves data directly from Parquet files using a custom plugin, Datasette-Digital-Land.
-
-First, install datasette-digital-land which will allow you use parquet files on datasette:
-
-    make init
-
-Use Docker Compose to build the application:
-    
-    docker-compose up -d --no-deps --build
-
-To run the application locally, either call 
-    
-    ./startup.sh 
-or
-    datasette serve --metadata metadata.json --port 8001 --host 127.0.0.1
-
-
-# TODO
-
-- add different environments for metadata.json
-- serve old data in addition to parquet data (i think this is as simple as modifying the existing datasette serve command)
