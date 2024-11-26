@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-ping s3.amazonaws.com
+curl s3.amazonaws.com
 
 echo $COLLECTION_DATA_BUCKET
 # Perform environment variable substitution for metadata.json if deployed
