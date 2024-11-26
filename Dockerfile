@@ -2,17 +2,6 @@ FROM python:3.8
 RUN mkdir -p app
 WORKDIR /app
 
-# Install dependencies for downloading and unzipping
-RUN apt-get update && \
-    apt-get install -y curl unzip && \
-    rm -rf /var/lib/apt/lists/*
-
-# Download the AWS CLI v2
-RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
-    unzip awscliv2.zip && \
-    ./aws/install && \
-    rm -rf awscliv2.zip aws
-
 RUN apt-get update && \
     apt-get install -y python3-dev gcc libsqlite3-mod-spatialite jq gettext && \
     rm -rf /var/lib/apt/lists/*
