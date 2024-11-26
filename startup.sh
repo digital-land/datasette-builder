@@ -2,7 +2,7 @@
 if aws s3api head-bucket --bucket "$COLLECTION_DATA_BUCKET" 2>/dev/null; then
     echo "Bucket $COLLECTION_DATA_BUCKET exists."
 else
-    echo "Bucket $COLLECTION_DATA_BUCKET does not exist or you do not have permission to access it."
+    echo "Bucket $COLLECTION_DATA_BUCKET does not exist or you do not have permission to access it." >&2
 fi
 
 echo $COLLECTION_DATA_BUCKET
