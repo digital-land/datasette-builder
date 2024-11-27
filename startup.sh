@@ -1,12 +1,10 @@
 #!/usr/bin/env bash
 curl -v s3.amazonaws.com
 
-echo $COLLECTION_DATA_BUCKET
 # Perform environment variable substitution for metadata.json if deployed
 if [[ ! -z "$COLLECTION_DATA_BUCKET" ]]; then
   envsubst < metadata_template.json > metadata.json
   echo "COLLECTION_DATA_BUCKET set so metadata.json created"
-  jq . metadata.json
 else
   echo "COLLECTION_DATA_BUCKET not set so metadata.json not created"
 fi
@@ -37,7 +35,6 @@ get_inspection_hash() {
 }
 
 start_datasette
-echo "initial start_datasette ran"
 
 CURRENT_CHECKSUM=$(get_inspection_hash)
 
