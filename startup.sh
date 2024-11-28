@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-curl -v s3.amazonaws.com
 
 # Perform environment variable substitution for metadata.json if deployed
 if [[ ! -z "$COLLECTION_DATA_BUCKET" ]]; then

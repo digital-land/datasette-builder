@@ -33,6 +33,7 @@ services:
       AWS_ENDPOINT_URL: http://localstack:4566
       DUCKDB_S3_ENDPOINT: s3.localhost.localstack.cloud:4566
       DUCKDB_S3_USE_SSL: false
+      USE_AWS_CREDENTIAL_CHAIN: false
     dns:
       # Set the DNS server to be the LocalStack container
       - 10.0.2.20
