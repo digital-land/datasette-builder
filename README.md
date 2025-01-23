@@ -32,6 +32,14 @@ You will also need the name of an S3 bucket that has the required sqlite files.
 
 `aws-vault exec dl-prod -- make start BUCKET=<environment>-collection-data`
 
+## Smoke tests
+
+To run smoke tests (implemented with AWS Synthetics Canaries) locally using the stubs of the AWS SDK, simply run:
+
+`make test-smoke`
+
+The smoke tests require Chrome browser and the corresponding version of chromedriver CLI to be installed.
+
 # Licence
 
 The software in this project is open source and covered by the [LICENSE](LICENSE) file.

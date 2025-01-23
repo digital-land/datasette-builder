@@ -10,3 +10,9 @@ start: ./files
 
 clean:
 	@rm -rf ./files
+
+test-smoke:
+	cd tests/smoke && \
+	pip install -r requirements_test.txt && \
+	pytest
+
