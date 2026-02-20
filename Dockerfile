@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM python:3.10
 RUN mkdir -p app
 WORKDIR /app
 
@@ -7,17 +7,20 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 ENV SQLITE_EXTENSIONS '/usr/lib/x86_64-linux-gnu/mod_spatialite.so'
-RUN pip install -U datasette
-RUN pip install datasette-block-robots
-RUN pip uninstall -y uvicorn
-RUN pip install uvicorn[standard] gunicorn
-RUN pip install csvkit
+COPY requirements/requirements.txt .
+RUN pip install -r requirements.txt
 
 EXPOSE 5000
 ENV PORT=5000
 
 COPY startup.sh .
 
-ADD templates /app/templates
+COPY templates /app/templates
+
+RUN groupadd --system appuser && \
+    useradd --system --gid appuser --no-create-home appuser && \
+    chown -R appuser:appuser /app
+
+USER appuser
 
 ENTRYPOINT ["bash", "startup.sh"]
