@@ -1,0 +1,5 @@
+datasette
+datasette-block-robots
+uvicorn[standard]
+gunicorn
+csvkit
