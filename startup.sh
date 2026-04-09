@@ -2,6 +2,21 @@
 
 DATASETTE_PID=0
 
+validate_inspect_file() {
+  INSPECT_KEYS=$(cat /mnt/datasets/inspect-data-all.json | jq -r 'keys[]')
+  for KEY in $INSPECT_KEYS; do
+    if [ ! -f "/mnt/datasets/$KEY.sqlite3" ]; then
+      echo "WARNING: inspect file references $KEY but /mnt/datasets/$KEY.sqlite3 is missing — datasette will fall back to live EFS reads for this database"
+    fi
+  done
+  for FILE in /mnt/datasets/*.sqlite3; do
+    BASENAME=$(basename "$FILE" .sqlite3)
+    if ! echo "$INSPECT_KEYS" | grep -qx "$BASENAME"; then
+      echo "WARNING: $BASENAME.sqlite3 exists but has no entry in inspect file — datasette will fall back to live EFS reads for this database"
+    fi
+  done
+}
+
 start_datasette() {
   DATASETTE_SERVE_ARGS="-h 0.0.0.0 -p $PORT --setting default_cache_ttl 21600 --setting sql_time_limit_ms 10000 --setting allow_download off --setting allow_facet off --nolock --cors --immutable=/mnt/datasets/digital-land.sqlite3 --immutable=/mnt/datasets/performance.sqlite3 "
 
@@ -22,9 +37,11 @@ start_datasette() {
 }
 
 get_inspection_hash() {
-  echo "$(cat /mnt/datasets/inspect-data-all.json)--$(ls -al /mnt/datasets/inspect-data-all.json)" | sha256sum
+  # %s = file size in bytes, %Y = modification time as Unix timestamp
+  stat -c '%s %Y' /mnt/datasets/inspect-data-all.json
 }
 
+validate_inspect_file
 start_datasette
 
 CURRENT_CHECKSUM=$(get_inspection_hash)
