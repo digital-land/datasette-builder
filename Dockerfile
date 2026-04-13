@@ -14,6 +14,7 @@ EXPOSE 5000
 ENV PORT=5000
 
 COPY startup.sh .
+COPY plugins /app/plugins
 
 COPY templates /app/templates
 
