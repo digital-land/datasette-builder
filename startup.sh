@@ -25,6 +25,25 @@ get_inspection_hash() {
   echo "$(cat /mnt/datasets/inspect-data-all.json)--$(ls -al /mnt/datasets/inspect-data-all.json)" | sha256sum
 }
 
+echo "=== Mount diagnostics ==="
+echo "--- /mnt contents ---"
+ls -la /mnt/ 2>&1 || echo "ERROR: Cannot list /mnt"
+echo "--- /mnt/datasets contents ---"
+ls -la /mnt/datasets/ 2>&1 || echo "ERROR: Cannot list /mnt/datasets (mount may be missing or empty)"
+echo "--- inspect-data-all.json check ---"
+if [ -f /mnt/datasets/inspect-data-all.json ]; then
+  echo "inspect-data-all.json exists, size: $(wc -c < /mnt/datasets/inspect-data-all.json) bytes"
+else
+  echo "ERROR: /mnt/datasets/inspect-data-all.json does not exist"
+fi
+echo "--- digital-land.sqlite3 check ---"
+if [ -f /mnt/datasets/digital-land.sqlite3 ]; then
+  echo "digital-land.sqlite3 exists"
+else
+  echo "ERROR: /mnt/datasets/digital-land.sqlite3 does not exist"
+fi
+echo "=== End mount diagnostics ==="
+
 start_datasette
 
 CURRENT_CHECKSUM=$(get_inspection_hash)
