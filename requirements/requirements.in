@@ -3,3 +3,5 @@ datasette-block-robots
 uvicorn[standard]
 gunicorn
 csvkit
+datasette-parquet @ https://github.com/digital-land/digital-land-datasette/archive/2f98d4ab2fcbe5fc649da9a11c616e4d53abe4dd.zip
+deltalake
