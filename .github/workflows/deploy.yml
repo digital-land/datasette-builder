@@ -15,7 +15,7 @@ jobs:
     outputs:
       environments: ${{ steps.environments.outputs.result }}
     steps:
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v8
         id: environments
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -39,7 +39,7 @@ jobs:
     env:
       DOCKER_REPO: ${{ secrets.DEPLOY_DOCKER_REPOSITORY }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - id: vars
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
@@ -51,12 +51,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y rsync
 
-      - uses: aws-actions/configure-aws-credentials@v1-node16
+      - uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ secrets.DEPLOY_AWS_ROLE_ARN }}
           aws-region: eu-west-2
 
-      - uses: aws-actions/amazon-ecr-login@v1
+      - uses: aws-actions/amazon-ecr-login@v2
 
       - run: docker pull $DOCKER_REPO:latest || echo "no current latest image"
 
