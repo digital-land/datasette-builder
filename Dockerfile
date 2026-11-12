@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.13-slim
 RUN mkdir -p app
 WORKDIR /app
 
@@ -8,7 +8,7 @@ RUN apt-get update && \
 
 ENV SQLITE_EXTENSIONS '/usr/lib/x86_64-linux-gnu/mod_spatialite.so'
 COPY requirements/requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 5000
 ENV PORT=5000

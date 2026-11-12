@@ -14,10 +14,10 @@ clean:
 	@rm -rf ./files
 
 piptool-compile:
-	pip-compile requirements/requirements.in
+	pip-compile --allow-unsafe requirements/requirements.in
 
 piptool-upgrade:
-	pip-compile --upgrade requirements/requirements.in
+	pip-compile --allow-unsafe --upgrade requirements/requirements.in
 
 test-smoke:
 	cd tests/smoke && \
