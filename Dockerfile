@@ -8,8 +8,6 @@ RUN apt-get update && \
 
 ENV SQLITE_EXTENSIONS '/usr/lib/x86_64-linux-gnu/mod_spatialite.so'
 COPY requirements/requirements.txt .
-# requirements.txt is compiled with --allow-unsafe so pip and setuptools are pinned too;
-# this replaces the outdated pip that ships with the base image.
 RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 5000
