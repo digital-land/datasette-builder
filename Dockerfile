@@ -15,6 +15,7 @@ ENV PORT=5000
 COPY startup.sh .
 
 COPY templates /app/templates
+COPY plugins /app/plugins
 
 RUN groupadd --system appuser && \
     useradd --system --gid appuser --no-create-home appuser && \
