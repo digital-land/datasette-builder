@@ -13,6 +13,12 @@ It also contains `datasette_builder`, a Datasette plugin installed into the imag
   functions (every SpatiaLite function is denied), SpatiaLite's virtual tables can't be read, `fts3_tokenizer` is
   blocked, no database can be attached, and value and query sizes are capped. The reasons are documented in
   [hardening.py](src/datasette_builder/hardening.py).
+* makes the service read-only over HTTP: anything other than `GET`, `HEAD` and `OPTIONS` is refused with 405, so
+  Datasette's state-changing routes (such as the `/-/messages` banner) can't be used, including from another website
+  through a visitor's browser. The reasons are documented in [read_only.py](src/datasette_builder/read_only.py).
+* replaces Datasette's `escape_css_string` template filter with a strict allowlist, so column names (which come from
+  the visitor's SQL on the query page) can't add rules to the page's inline stylesheet. The reasons are documented in
+  [css_escaping.py](src/datasette_builder/css_escaping.py).
 * overrides the `_table.html` template to link to resources in the digital-land database
 
 SpatiaLite is installed and loaded because the pipeline builds every dataset database with SpatiaLite metadata, which
