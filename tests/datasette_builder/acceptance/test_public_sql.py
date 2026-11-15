@@ -145,15 +145,22 @@ def test_visitors_cannot_discover_unpublished_datasets(client):
 @pytest.mark.parametrize(
     "sql",
     [
-        "select AsText(geometry_geom) from entity",
-        "select ST_Area(geometry_geom) from entity",
+        "select AsText(geometry) from entity",
+        "select ST_Area(geometry) from entity",
+        # Parses image metadata supplied in the query.
+        "select GeomFromExifGpsBlob(NULL)",
         "select spatialite_version()",
         "select Zipfile_NumSHP('/etc/passwd')",
+        # Read and change process-wide PROJ state.
+        "select proj_setdatabasepath(NULL)",
+        "select proj_getdatabasepath()",
     ],
 )
-def test_visitors_cannot_call_spatialite_functions(client, sql):
+@EVERY_DATASET
+def test_visitors_cannot_call_spatialite_functions(client, db, sql):
     # None of SpatiaLite's functions are allowed, not just the dangerous ones.
-    response = run_sql(client, sql, db=SPATIAL_DATASET)
+    # SpatiaLite is loaded on every connection, so check every kind of dataset.
+    response = run_sql(client, sql, db=db)
     assert response.status_code == 400
     assert "not authorized" in response.json()["error"]
 
@@ -163,6 +170,18 @@ def test_visitors_cannot_query_spatialite_virtual_tables(client, table):
     response = run_sql(client, f"select * from {table}", db=SPATIAL_DATASET)
     assert response.status_code == 400
     assert "prohibited" in response.json()["error"]
+
+
+@EVERY_DATASET
+@pytest.mark.parametrize("route", ["entity.json", "entity.csv"])
+def test_visitors_cannot_call_spatialite_functions_in_table_filters(client, db, route):
+    # Table pages and CSV exports accept SQL in a _where filter. It runs on the
+    # same locked-down connection as the query box.
+    response = client.get(
+        f"/{db}/{route}", params={"_where": "XB_Create(NULL) is null"}
+    )
+    assert response.status_code == 400
+    assert "not authorized" in response.text
 
 
 # --- Visitors can't damage or crash the service -------------------------------

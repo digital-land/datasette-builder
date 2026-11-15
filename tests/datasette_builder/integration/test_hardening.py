@@ -104,6 +104,27 @@ async def test_table_pages_use_the_custom_template(datasette):
     assert "customised _table.html" in response.text
 
 
+@pytest.mark.parametrize("route", ["entity.json", "entity.csv", "entity"])
+async def test_table_filters_go_through_the_same_lockdown(datasette, route):
+    # SQL can also reach the connection through a table's _where filter, on the
+    # JSON, CSV and HTML table routes. It's prepared on the same hardened
+    # connection, so a refused function is refused there too.
+    response = await datasette.client.get(
+        f"/testdb/{route}", params={"_where": "fts3_tokenizer('simple') is not null"}
+    )
+    assert response.status_code == 400
+    assert "not authorized" in response.text
+
+
+async def test_ordinary_table_filters_still_work(datasette):
+    response = await datasette.client.get(
+        "/testdb/entity.json",
+        params={"_where": "upper(name) = 'HELLO WORLD'", "_shape": "array"},
+    )
+    assert response.status_code == 200
+    assert [row["name"] for row in response.json()] == ["hello world"]
+
+
 @pytest.mark.parametrize(
     "path", ["/", "/testdb", "/testdb/entity", "/testdb/entity.json"]
 )
