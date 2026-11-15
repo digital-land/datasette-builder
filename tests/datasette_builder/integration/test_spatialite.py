@@ -83,6 +83,11 @@ async def test_every_spatialite_function_is_denied(spatial_datasette):
         "select SqlProc_Execute(SqlProc_FromText('SELECT 1;'))",
         # Opens a zip file at any path.
         "select Zipfile_NumSHP('/etc/passwd')",
+        # Read and change process-wide PROJ state.
+        "select proj_setdatabasepath(NULL)",
+        "select proj_getdatabasepath()",
+        # Parses image metadata supplied in the query.
+        "select GeomFromExifGpsBlob(NULL)",
         # Ordinary spatial functions are denied too.
         "select AsText(geometry_geom) from entity",
         "select spatialite_version()",
@@ -106,6 +111,19 @@ async def test_spatialite_virtual_tables_are_refused(spatial_query, sql):
     status, body = await spatial_query(sql)
     assert status == 400
     assert "prohibited" in body["error"]
+
+
+@pytest.mark.parametrize("route", ["entity.json", "entity.csv"])
+async def test_spatialite_functions_are_refused_in_table_filters(
+    spatial_datasette, route
+):
+    # SQL in a table's _where filter reaches the same connection as the query
+    # box, so SpatiaLite's functions must be refused there too.
+    response = await spatial_datasette.client.get(
+        f"/spatial/{route}", params={"_where": "XB_Create(NULL) is null"}
+    )
+    assert response.status_code == 400
+    assert "not authorized" in response.text
 
 
 async def test_spatial_datasets_can_still_be_queried(spatial_query):
