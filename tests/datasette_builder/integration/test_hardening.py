@@ -24,7 +24,11 @@ async def test_plugin_is_loaded_from_its_entry_point(datasette):
     response = await datasette.client.get("/-/plugins.json")
     plugins = {p["name"]: p for p in response.json()}
     assert "datasette-builder" in plugins
-    assert plugins["datasette-builder"]["hooks"] == ["prepare_connection"]
+    assert set(plugins["datasette-builder"]["hooks"]) == {
+        "prepare_connection",
+        "asgi_wrapper",
+        "prepare_jinja2_environment",
+    }
     assert plugins["datasette-builder"]["templates"] is True
 
 
