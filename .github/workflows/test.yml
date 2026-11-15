@@ -13,12 +13,21 @@ jobs:
   test:
     name: Lint and test
     runs-on: ubuntu-latest
+    env:
+      # Load SpatiaLite in the integration tests, as production does. With this
+      # set, the SpatiaLite tests fail rather than skip if it can't be loaded.
+      SQLITE_EXTENSIONS: mod_spatialite
     steps:
       - uses: actions/checkout@v7
 
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
+
+      - name: Install SpatiaLite
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libsqlite3-mod-spatialite
 
       - run: make init PYTHON=python
 

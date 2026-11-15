@@ -4,9 +4,18 @@
 FROM python:3.13-slim AS base
 
 # jq: startup.sh reads the dataset list from inspect-data-all.json
+# libsqlite3-mod-spatialite: the pipeline builds dataset databases with
+#   SpatiaLite metadata (InitSpatialMetadata), which includes virtual tables
+#   whose code lives in SpatiaLite. Datasette can't open those databases
+#   without it. Its SQL functions are all denied to public queries by the
+#   datasette_builder plugin (see src/datasette_builder/hardening.py).
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends jq && \
+    apt-get install -y --no-install-recommends jq libsqlite3-mod-spatialite && \
     rm -rf /var/lib/apt/lists/*
+
+# Datasette loads these extensions on every connection. Named rather than given
+# as a path, so the dynamic loader finds it on any architecture.
+ENV SQLITE_EXTENSIONS=mod_spatialite
 
 WORKDIR /app
 

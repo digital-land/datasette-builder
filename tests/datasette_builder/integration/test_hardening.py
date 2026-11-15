@@ -1,4 +1,17 @@
-"""Integration tests: the plugin wired into Datasette, exercised in-process."""
+"""
+Integration tests: the plugin wired into Datasette, exercised in-process.
+
+What these check against:
+- The plugin is loaded the way production loads it (the package's `datasette`
+  entry point) and applies the hardening to Datasette's own connections, not
+  just to connections we create.
+- Refusals reach visitors as errors over Datasette's HTTP API.
+- Everything Datasette normally serves - pages, views, full-text search and
+  ?_search=, the custom table template - still works under the lockdown.
+
+These use a plain SQLite dataset, so they run anywhere. The SpatiaLite case is
+in test_spatialite.py.
+"""
 
 import sqlite3
 
@@ -72,6 +85,17 @@ async def test_ordinary_queries_views_and_search_work(query):
         " where entity_fts match 'hello'"
     )
     assert (status, body["rows"]) == (200, [{"name": "hello world"}])
+
+
+async def test_datasette_search_still_works(datasette):
+    # ?_search= builds its query with Datasette's escape_fts function, which the
+    # allowlist must keep.
+    response = await datasette.client.get(
+        "/testdb/entity.json",
+        params={"_search": "hello", "_fts_table": "entity_fts", "_shape": "array"},
+    )
+    assert response.status_code == 200
+    assert [row["name"] for row in response.json()] == ["hello world"]
 
 
 async def test_table_pages_use_the_custom_template(datasette):

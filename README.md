@@ -9,9 +9,14 @@ and mounted at `/mnt/datasets`.
 
 It also contains `datasette_builder`, a Datasette plugin installed into the image, which:
 
-* hardens every SQLite connection that serves the public SQL query box (blocks unsafe functions such as
-  `fts3_tokenizer`, forbids attaching databases, caps value and query sizes)
+* hardens every SQLite connection that serves the public SQL query box: queries may only call plain SQLite's
+  functions (every SpatiaLite function is denied), SpatiaLite's virtual tables can't be read, `fts3_tokenizer` is
+  blocked, no database can be attached, and value and query sizes are capped. The reasons are documented in
+  [hardening.py](src/datasette_builder/hardening.py).
 * overrides the `_table.html` template to link to resources in the digital-land database
+
+SpatiaLite is installed and loaded because the pipeline builds every dataset database with SpatiaLite metadata, which
+Datasette can't open without it. Spatial SQL is not available in the query box; geometry is available as text.
 
 The repository follows the [repository structure conventions](https://github.com/digital-land/digital-planning-ways-of-working).
 
@@ -47,6 +52,10 @@ Each test level can also be run on its own with `make unit`, `make integration` 
 
 `make docker-test` is useful when something passes or fails locally for reasons specific to your machine. It mounts
 the Docker socket into the test container so the acceptance tests can start the image.
+
+The SpatiaLite integration tests need SpatiaLite, set with `SQLITE_EXTENSIONS=mod_spatialite`. Without it (the usual
+case on a laptop) `make test` skips them with a message; they always run in `make docker-test` and in CI, and the
+acceptance tests cover SpatiaLite through the image either way.
 
 ### Dependencies
 
