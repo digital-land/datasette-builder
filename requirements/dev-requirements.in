@@ -1,0 +1,9 @@
+# Local development and CI: the project (editable), test tools and linters.
+# Third-party runtime dependencies belong in pyproject.toml, not here.
+-c requirements.txt
+-e file:.
+httpx
+pytest
+pytest-asyncio
+ruff
+testcontainers

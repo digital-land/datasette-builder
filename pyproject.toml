@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "datasette-builder"
+version = "1.0.0"
+description = "Datasette plugin and configuration for the planning data Datasette instance"
+requires-python = ">=3.13"
+dependencies = [
+    # Upper bound: the plugin relies on the 0.x prepare_connection and
+    # template-loading behaviour; review before moving to 1.x.
+    "datasette>=0.65.5,<0.66",
+    "datasette-block-robots>=1.1",
+    # `datasette serve` runs on uvicorn; [standard] adds uvloop/httptools,
+    # which uvicorn uses automatically for better performance.
+    "uvicorn[standard]",
+]
+
+[project.entry-points.datasette]
+datasette_builder = "datasette_builder"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+datasette_builder = ["templates/*.html"]
+
+[tool.pytest.ini_options]
+# Bare `pytest` runs every level (unit, integration, acceptance); `make test`
+# and `make docker-test` both rely on this, so they can't drift apart.
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+
+[tool.ruff]
+src = ["src"]
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]

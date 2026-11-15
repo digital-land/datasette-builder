@@ -31,3 +31,7 @@ view_model.db
 
 # ignore act secrets
 .secrets
+
+# test and lint caches
+.pytest_cache/
+.ruff_cache/
