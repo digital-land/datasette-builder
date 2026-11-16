@@ -165,11 +165,24 @@ def test_visitors_cannot_call_spatialite_functions(client, db, sql):
     assert "not authorized" in response.json()["error"]
 
 
-@pytest.mark.parametrize("table", ["SpatialIndex", "KNN2", "ElementaryGeometries"])
+@pytest.mark.parametrize(
+    "table", ["SpatialIndex", "KNN", "KNN2", "ElementaryGeometries"]
+)
 def test_visitors_cannot_query_spatialite_virtual_tables(client, table):
+    # KNN and KNN2 come from different SpatiaLite versions; real files can
+    # have either.
     response = run_sql(client, f"select * from {table}", db=SPATIAL_DATASET)
     assert response.status_code == 400
     assert "prohibited" in response.json()["error"]
+
+
+def test_spatial_indexes_stay_readable(client):
+    # SQLite's own rtree tables, made by CreateSpatialIndex.
+    response = run_sql(
+        client, "select count(*) as n from idx_entity_geometry_geom", db=SPATIAL_DATASET
+    )
+    assert response.status_code == 200
+    assert response.json()["rows"] == [{"n": 1}]
 
 
 @EVERY_DATASET

@@ -31,10 +31,17 @@ from SQL.
    - load_extension: Datasette already disables it after loading SpatiaLite;
      denied as a backstop.
 
-2. SpatiaLite virtual tables (authorizer, SQLITE_READ)
-   InitSpatialMetadata creates SpatialIndex, KNN2 and ElementaryGeometries,
-   which run SpatiaLite code when queried. Nothing Datasette serves needs them,
-   so reading them is denied.
+2. Extension virtual tables (authorizer, SQLITE_READ)
+   A virtual table runs its module's code whenever it's queried. SpatiaLite's
+   InitSpatialMetadata creates several (SpatialIndex, ElementaryGeometries,
+   and KNN or KNN2 depending on the SpatiaLite version that built the file).
+   Nothing Datasette serves needs them. When a connection is hardened, its
+   database schema is read and every virtual table whose module isn't one of
+   SQLite's own (full-text search and rtree) is made unreadable, so tables
+   from any SpatiaLite version are covered without naming them. Definitions
+   that can't be parsed are treated the same way. Ordinary tables, full-text
+   search tables and rtree spatial indexes stay readable. A fixed list of
+   SpatiaLite's table names is denied on every connection as a backstop.
 
 3. Connection config (sqlite3_db_config)
    - DEFENSIVE on: no writable_schema or shadow-table corruption tricks.
@@ -55,6 +62,7 @@ from SQL.
 Requires Python 3.12+ (Connection.setconfig).
 """
 
+import re
 import sqlite3
 
 from datasette import hookimpl
@@ -88,8 +96,17 @@ ALLOWED_FUNCTIONS = (
     _plain_sqlite_functions() - DENIED_BUILTIN_FUNCTIONS
 ) | DATASETTE_FUNCTIONS
 
-# Virtual tables created by SpatiaLite's InitSpatialMetadata.
-DENIED_TABLES = frozenset({"spatialindex", "knn2", "elementarygeometries"})
+# Virtual table modules built into SQLite. Tables using any other module are
+# made unreadable (see module docstring).
+CORE_VIRTUAL_TABLE_MODULES = frozenset({"fts3", "fts4", "fts5", "rtree", "rtree_i32"})
+
+# SpatiaLite's virtual table names, denied on every connection as a backstop.
+DENIED_TABLES = frozenset({"spatialindex", "knn", "knn2", "elementarygeometries"})
+
+_VIRTUAL_TABLE_MODULE = re.compile(
+    r"^\s*create\s+virtual\s+table\s+.+?\s+using\s+[\"'`\[]?(\w+)",
+    re.IGNORECASE | re.DOTALL,
+)
 
 DB_CONFIG = (
     (sqlite3.SQLITE_DBCONFIG_DEFENSIVE, True),
@@ -108,16 +125,42 @@ LIMITS = (
 )
 
 
-def authorizer(action, arg1, arg2, db_name, trigger_or_view):
-    # SQLITE_FUNCTION: arg2 is the function name.
-    if action == sqlite3.SQLITE_FUNCTION:
-        if (arg2 or "").lower() not in ALLOWED_FUNCTIONS:
-            return sqlite3.SQLITE_DENY
-    # SQLITE_READ: arg1 is the table name, arg2 the column.
-    elif action == sqlite3.SQLITE_READ:
-        if (arg1 or "").lower() in DENIED_TABLES:
-            return sqlite3.SQLITE_DENY
-    return sqlite3.SQLITE_OK
+def virtual_table_module(create_sql):
+    """The module a CREATE VIRTUAL TABLE statement uses, or None if unparseable."""
+    match = _VIRTUAL_TABLE_MODULE.match(create_sql or "")
+    return match.group(1).lower() if match else None
+
+
+def extension_virtual_tables(conn):
+    """Names of virtual tables in conn's database that don't use a core module."""
+    rows = conn.execute(
+        "select name, sql from sqlite_master"
+        " where type = 'table' and sql like 'create virtual table%'"
+    ).fetchall()
+    return frozenset(
+        name.lower()
+        for name, create_sql in rows
+        if virtual_table_module(create_sql) not in CORE_VIRTUAL_TABLE_MODULES
+    )
+
+
+def make_authorizer(denied_tables):
+    def authorizer(action, arg1, arg2, db_name, trigger_or_view):
+        # SQLITE_FUNCTION: arg2 is the function name.
+        if action == sqlite3.SQLITE_FUNCTION:
+            if (arg2 or "").lower() not in ALLOWED_FUNCTIONS:
+                return sqlite3.SQLITE_DENY
+        # SQLITE_READ: arg1 is the table name, arg2 the column.
+        elif action == sqlite3.SQLITE_READ:
+            if (arg1 or "").lower() in denied_tables:
+                return sqlite3.SQLITE_DENY
+        return sqlite3.SQLITE_OK
+
+    return authorizer
+
+
+# The authorizer with only the fixed table list, for callers without a schema.
+authorizer = make_authorizer(DENIED_TABLES)
 
 
 def harden(conn):
@@ -125,7 +168,9 @@ def harden(conn):
         conn.setconfig(option, enabled)
     for category, limit in LIMITS:
         conn.setlimit(category, limit)
-    conn.set_authorizer(authorizer)
+    # Read the schema before the authorizer is installed.
+    denied_tables = DENIED_TABLES | extension_virtual_tables(conn)
+    conn.set_authorizer(make_authorizer(denied_tables))
 
 
 @hookimpl

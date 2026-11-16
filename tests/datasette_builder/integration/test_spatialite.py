@@ -10,8 +10,9 @@ What these check against:
   The security finding used XB_SchemaValidate to read files and fetch internal
   URLs, and SqlProc_Execute crashed the server; the guard test below covers
   every SpatiaLite function, so a SpatiaLite upgrade can't add an unblocked one.
-- SpatiaLite's virtual tables (SpatialIndex, KNN2, ElementaryGeometries) must
-  not be readable.
+- Virtual tables from extensions (SpatialIndex, KNN or KNN2 depending on the
+  SpatiaLite version, ElementaryGeometries, and any others) must not be
+  readable, while SQLite's own rtree spatial indexes stay readable.
 
 They need SpatiaLite (SQLITE_EXTENSIONS) and are skipped without it; they run in
 `make docker-test` and CI.
@@ -22,7 +23,12 @@ import sqlite3
 import pytest
 from datasette.utils import check_connection
 
-from datasette_builder.hardening import ALLOWED_FUNCTIONS, authorizer
+from datasette_builder.hardening import (
+    ALLOWED_FUNCTIONS,
+    CORE_VIRTUAL_TABLE_MODULES,
+    authorizer,
+    virtual_table_module,
+)
 from tests.datasette_builder.spatial_datasets import GEOMETRY
 
 
@@ -103,6 +109,7 @@ async def test_spatialite_functions_are_refused_over_http(spatial_query, sql):
     "sql",
     [
         "select * from SpatialIndex",
+        "select * from KNN",
         "select * from KNN2",
         "select * from ElementaryGeometries",
     ],
@@ -111,6 +118,38 @@ async def test_spatialite_virtual_tables_are_refused(spatial_query, sql):
     status, body = await spatial_query(sql)
     assert status == 400
     assert "prohibited" in body["error"]
+
+
+async def test_every_extension_virtual_table_is_refused(spatial_query):
+    # Not a fixed list: every virtual table in the database whose module isn't
+    # SQLite's own must be unreadable, whatever SpatiaLite version made it.
+    status, body = await spatial_query(
+        "select name, sql from sqlite_master"
+        " where type = 'table' and sql like 'create virtual table%'"
+    )
+    assert status == 200
+    tables = {row["name"]: virtual_table_module(row["sql"]) for row in body["rows"]}
+    extension_tables = [
+        name
+        for name, module in tables.items()
+        if module not in CORE_VIRTUAL_TABLE_MODULES
+    ]
+    # Sanity check: the fixture has SpatiaLite's tables, and rtree indexes.
+    assert {"SpatialIndex", "KNN", "KNN2"} <= set(extension_tables)
+    assert "rtree" in tables.values()
+
+    for name in extension_tables:
+        status, body = await spatial_query(f'select * from "{name}" limit 1')
+        assert status == 400, name
+        assert "prohibited" in body["error"], name
+
+
+async def test_rtree_spatial_indexes_stay_readable(spatial_query):
+    # CreateSpatialIndex makes core SQLite rtree tables, which are fine to read.
+    status, body = await spatial_query(
+        "select count(*) as n from idx_entity_geometry_geom"
+    )
+    assert (status, body["rows"]) == (200, [{"n": 1}])
 
 
 @pytest.mark.parametrize("route", ["entity.json", "entity.csv"])

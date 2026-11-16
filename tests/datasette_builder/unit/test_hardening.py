@@ -18,7 +18,10 @@ from datasette_builder.hardening import (
     MAX_SQL_BYTES,
     MAX_VALUE_BYTES,
     authorizer,
+    extension_virtual_tables,
     harden,
+    make_authorizer,
+    virtual_table_module,
 )
 
 # Names of real SpatiaLite functions from the security finding and our own
@@ -126,15 +129,86 @@ def test_authorizer_ignores_other_actions():
 # --- SpatiaLite's virtual tables ----------------------------------------------
 
 
-@pytest.mark.parametrize("table", ["SpatialIndex", "KNN2", "ElementaryGeometries"])
-def test_reading_spatialite_virtual_tables_is_denied(table):
-    # These run SpatiaLite code when queried and nothing we serve needs them.
-    # (Creating them needs SpatiaLite; the integration tests query real ones.)
+@pytest.mark.parametrize(
+    "table", ["SpatialIndex", "KNN", "KNN2", "ElementaryGeometries"]
+)
+def test_spatialite_virtual_table_names_are_always_denied(table):
+    # The fixed backstop list: these run SpatiaLite code when queried and
+    # nothing we serve needs them. KNN and KNN2 come from different SpatiaLite
+    # versions. (The integration tests query real ones.)
     assert table.lower() in DENIED_TABLES
     assert (
         authorizer(sqlite3.SQLITE_READ, table, "rowid", "main", None)
         == sqlite3.SQLITE_DENY
     )
+
+
+@pytest.mark.parametrize(
+    "create_sql, module",
+    [
+        ("CREATE VIRTUAL TABLE KNN USING VirtualKNN()", "virtualknn"),
+        ("create virtual table x using fts5(name)", "fts5"),
+        ('CREATE VIRTUAL TABLE "idx_entity_geom" USING rtree(pkid, xmin)', "rtree"),
+        ('CREATE VIRTUAL TABLE t USING "Quoted"(a)', "quoted"),
+        ("CREATE VIRTUAL TABLE\n  t\n  USING\n  fts4(a)", "fts4"),
+        ("not a virtual table", None),
+        (None, None),
+    ],
+)
+def test_virtual_table_module_is_read_from_the_definition(create_sql, module):
+    assert virtual_table_module(create_sql) == module
+
+
+class StandInSchema:
+    """A connection whose sqlite_master holds the given virtual tables."""
+
+    def __init__(self, rows):
+        self.rows = rows
+
+    def execute(self, sql):
+        return self
+
+    def fetchall(self):
+        return self.rows
+
+
+def test_virtual_tables_from_extensions_are_found():
+    schema = StandInSchema(
+        [
+            ("KNN", "CREATE VIRTUAL TABLE KNN USING VirtualKNN()"),
+            ("Future", "CREATE VIRTUAL TABLE Future USING VirtualSomethingNew()"),
+            ("Broken", "CREATE VIRTUAL TABLE Broken"),  # unparseable: denied
+            ("entity_fts", "CREATE VIRTUAL TABLE entity_fts USING fts5(name)"),
+            ("idx_geom", "CREATE VIRTUAL TABLE idx_geom USING rtree(pkid, x1, x2)"),
+        ]
+    )
+    assert extension_virtual_tables(schema) == {"knn", "future", "broken"}
+
+
+def test_sqlites_own_virtual_tables_stay_readable():
+    # Full-text search and rtree spatial indexes are core SQLite and are used
+    # by the published datasets, so they must not be caught by the denial.
+    conn = sqlite3.connect(":memory:")
+    conn.executescript(
+        """
+        create virtual table docs using fts5(body);
+        insert into docs values ('hello world');
+        create virtual table idx using rtree(id, minx, maxx);
+        insert into idx values (1, 0, 1);
+        """
+    )
+    harden(conn)
+    assert conn.execute("select body from docs where docs match 'hello'").fetchall()
+    assert conn.execute("select id from idx").fetchall() == [(1,)]
+    conn.close()
+
+
+def test_denied_tables_apply_per_connection():
+    denied = make_authorizer(DENIED_TABLES | {"future"})
+    assert (
+        denied(sqlite3.SQLITE_READ, "Future", "x", "main", None) == sqlite3.SQLITE_DENY
+    )
+    assert denied(sqlite3.SQLITE_READ, "entity", "x", "main", None) == sqlite3.SQLITE_OK
 
 
 def test_other_tables_can_be_read(conn):
