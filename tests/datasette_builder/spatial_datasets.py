@@ -27,6 +27,9 @@ def create_spatial_dataset(path, extension="mod_spatialite"):
     conn.enable_load_extension(False)
 
     conn.execute("select InitSpatialMetadata(1)")
+    # SpatiaLite 5.1 creates KNN2; the pipeline's files were built with a
+    # version that created KNN. Include both, as the real files can have either.
+    conn.execute("create virtual table if not exists KNN using VirtualKNN()")
     conn.execute(
         "create table entity ("
         " entity integer primary key, name text, geometry text, point text)"
