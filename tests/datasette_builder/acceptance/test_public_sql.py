@@ -146,7 +146,13 @@ def test_visitors_cannot_discover_unpublished_datasets(client):
     "sql",
     [
         "select AsText(geometry) from entity",
+        "select ST_AsText(geometry) from entity",
         "select ST_Area(geometry) from entity",
+        # The XML functions one at a time, each with its required number of
+        # arguments (SQLite checks the count before the authorizer).
+        "select XB_Create(NULL)",
+        "select XB_SchemaValidate(NULL, NULL)",
+        "select XB_GetLastValidateError()",
         # Parses image metadata supplied in the query.
         "select GeomFromExifGpsBlob(NULL)",
         "select spatialite_version()",
